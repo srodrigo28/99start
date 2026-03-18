@@ -1,4 +1,5 @@
 export type OwnerBenefit = {
+  icon: string;
   title: string;
   text: string;
 };
@@ -73,14 +74,17 @@ export type TableAlert = {
 
 export const ownerBenefits: OwnerBenefit[] = [
   {
+    icon: "🏪",
     title: "Cadastre seu estabelecimento",
     text: "Nome, CNPJ, localizacao, horarios, cardapio e identidade do local.",
   },
   {
+    icon: "🧾",
     title: "Gerencie mesas e comandas",
     text: "Visual simples para acompanhar ocupacao, pedidos e fechamento.",
   },
   {
+    icon: "📈",
     title: "Organize a operacao",
     text: "Painel unico para status de comanda, faturamento e fluxo do dia.",
   },

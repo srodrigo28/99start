@@ -127,9 +127,21 @@ export default function Home() {
 
 function BenefitCard({ benefit }: { benefit: OwnerBenefit }) {
   return (
-    <div className="rounded-[24px] border border-white/10 bg-white/6 p-4 backdrop-blur-sm">
-      <h2 className="font-display text-xl">{benefit.title}</h2>
-      <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{benefit.text}</p>
+    <div className="min-w-0 overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-4 backdrop-blur-sm sm:p-5">
+      <div className="flex h-full flex-col items-center text-center">
+        <div className="mb-4">
+          <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(255,139,54,0.22),rgba(255,95,109,0.2))] text-2xl shadow-[0_10px_25px_rgba(255,95,109,0.12)]">
+            {benefit.icon}
+          </span>
+        </div>
+
+        <h2 className="max-w-full text-balance break-words font-display text-lg leading-tight sm:text-xl">
+          {benefit.title}
+        </h2>
+        <p className="mt-2 max-w-full break-words text-sm leading-6 text-[var(--muted)]">
+          {benefit.text}
+        </p>
+      </div>
     </div>
   );
 }
