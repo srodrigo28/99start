@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://start-app-three.vercel.app"),
   title: "Painel do Proprietário", 
   description: "Gestão de estabelecimentos, mesas e comandas.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
   
   // Otimização para Redes Sociais (Facebook, LinkedIn, WhatsApp, etc)
   openGraph: {
@@ -25,7 +30,7 @@ export const metadata: Metadata = {
     siteName: "Gestão de estabelecimentos, mesas e comandas.",
     images: [
       {
-        url: "/treina-c.png", // Imagens na pasta public são referenciadas a partir da raiz
+        url: "/favicon.ico",
         width: 1200,
         height: 630,
         alt: "Gestão de estabelecimentos, mesas e comandas.",
@@ -40,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Painel do Proprietário",
     description: "Gestão de estabelecimentos, mesas e comandas.",
-    images: ["/treina-c.png"],
+    images: ["/favicon.ico"],
   },
 
   // Instruções para os robôs do Google (Indexar a página e seguir os links)
