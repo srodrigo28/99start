@@ -76,17 +76,12 @@ export const ownerBenefits: OwnerBenefit[] = [
   {
     icon: "🏪",
     title: "Cadastre seu estabelecimento",
-    text: "Nome, CNPJ, localizacao, horarios, cardapio e identidade do local.",
+    text: "Informe nome, CNPJ, localização, horários, cardápio e identidade do seu negócio.",
   },
   {
     icon: "🧾",
     title: "Gerencie mesas e comandas",
-    text: "Visual simples para acompanhar ocupacao, pedidos e fechamento.",
-  },
-  {
-    icon: "📈",
-    title: "Organize a operacao",
-    text: "Painel unico para status de comanda, faturamento e fluxo do dia.",
+    text: "Acompanhe ocupação, pedidos e fechamento com uma visão simples e prática.",
   },
 ];
 
@@ -94,17 +89,17 @@ export const ownerStartSteps: OwnerStep[] = [
   {
     id: "01",
     title: "Criar conta",
-    text: "Entrada inicial para proprietario com email, senha e dados basicos.",
+    text: "Cadastre seu acesso com e-mail, senha e informações iniciais do responsável.",
   },
   {
     id: "02",
-    title: "Cadastrar o local",
-    text: "Preencher informacoes do estabelecimento e preparar a vitrine.",
+    title: "Cadastrar produtos",
+    text: "Adicione os produtos do seu estabelecimento com nome, preço, categoria e descrição.",
   },
   {
     id: "03",
-    title: "Comecar a operar",
-    text: "Adicionar mesas, cardapio e acompanhar comandas abertas.",
+    title: "Criar campanhas de vendas",
+    text: "Monte campanhas promocionais para atrair clientes e aumentar as vendas do seu negócio.",
   },
 ];
 
@@ -130,7 +125,7 @@ export const ownerDashboardMetrics: OwnerMetric[] = [
   {
     label: "Mensagens",
     value: "1",
-    detail: "cliente aguardando retorno",
+    detail: "Cliente aguardando retorno",
     tone: "rose",
   },
 ];
@@ -145,19 +140,19 @@ export const ownerDashboardActions: OwnerAction[] = [
   {
     href: "/owner/onboarding",
     title: "Novo estabelecimento",
-    text: "Iniciar ou ajustar onboarding do local",
+    text: "Iniciar ou ajustar o cadastro do local",
     tone: "warm",
   },
   {
     href: "/owner/tabs",
     title: "Controle de comandas",
-    text: "Ver ativas, fechamento e pendencias",
+    text: "Ver comandas ativas, fechamentos e pendências",
     tone: "cool",
   },
   {
     href: "/owner/tables",
     title: "Gerenciar mesas",
-    text: "Status, capacidade e ocupacao",
+    text: "Acompanhar status, capacidade e ocupação",
     tone: "mint",
   },
   {
@@ -171,45 +166,45 @@ export const ownerDashboardActions: OwnerAction[] = [
 export const onboardingStages: OnboardingStage[] = [
   {
     number: "01",
-    title: "Basico",
-    description: "Nome, descricao, categoria, faixa de preco e contato.",
+    title: "Básico",
+    description: "Nome, descrição, categoria, faixa de preço e contato.",
   },
   {
     number: "02",
-    title: "Midia",
-    description: "Fotos do local, capa e video opcional para a vitrine.",
+    title: "Mídia",
+    description: "Fotos do local, imagem de capa e vídeo opcional para a vitrine.",
   },
   {
     number: "03",
-    title: "Cardapio e ambiente",
-    description: "Itens iniciais, estilo musical e faixa etaria principal.",
+    title: "Cardápio e ambiente",
+    description: "Itens iniciais, estilo musical e perfil principal do público.",
   },
 ];
 
 export const onboardingFields: OnboardingField[] = [
   { label: "Nome do estabelecimento", value: "Saraiva Bar" },
   {
-    label: "Descricao",
-    value: "Bar com musica ao vivo, ambiente casual e foco em espetos.",
+    label: "Descrição",
+    value: "Bar com música ao vivo, ambiente casual e foco em espetos.",
   },
   { label: "Categoria", value: "Bar" },
-  { label: "Faixa de preco", value: "Medio" },
+  { label: "Faixa de preço", value: "Médio" },
   { label: "WhatsApp", value: "(62) 99999-9999" },
   {
     label: "Cidade",
-    value: "Goiania - GO",
-    hint: "Localizacao sera usada na busca por proximidade.",
+    value: "Goiânia - GO",
+    hint: "A localização será usada na busca por proximidade.",
   },
 ];
 
 export const onboardingMenuDrafts: MenuDraft[] = [
   {
     category: "🍔 Comidas",
-    items: ["Picanha na chapa", "Espeto de carne", "Porcao mista"],
+    items: ["Picanha na chapa", "Espeto de carne", "Porção mista"],
   },
   {
     category: "🍻 Bebidas",
-    items: ["Balde de cerveja", "Gin tropical", "Refrigerante lata"],
+    items: ["Balde de cerveja", "Gin tropical", "Refrigerante em lata"],
   },
 ];
 
@@ -221,18 +216,18 @@ export const ownerCommands: OwnerCommand[] = [
     createdAt: "13/01/2026, 23:34",
     total: "R$ 27,00",
     status: "Ativa",
-    items: [{ name: "3x carne espeto", price: "R$ 27,00" }],
+    items: [{ name: "3x carne no espeto", price: "R$ 27,00" }],
   },
   {
     code: "#1766423921796",
     customer: "Heionekm",
-    location: "Balcao · Saraiva Bar",
+    location: "Balcão · Saraiva Bar",
     createdAt: "22/12/2025, 18:43",
     total: "R$ 75,00",
     status: "Fechando",
     items: [
       { name: "3x heionekm", price: "R$ 75,00" },
-      { name: "1x carne espeto", price: "R$ 9,00" },
+      { name: "1x carne no espeto", price: "R$ 9,00" },
     ],
   },
   {
@@ -244,8 +239,8 @@ export const ownerCommands: OwnerCommand[] = [
     status: "Pagamento",
     items: [
       { name: "2x picanha na chapa", price: "R$ 89,90" },
-      { name: "1x refrigerante lata", price: "R$ 12,00" },
-      { name: "1x batata rustica", price: "R$ 20,10" },
+      { name: "1x refrigerante em lata", price: "R$ 12,00" },
+      { name: "1x batata rústica", price: "R$ 20,10" },
     ],
   },
 ];
@@ -263,7 +258,7 @@ export const ownerTableAlerts: TableAlert[] = [
   {
     table: "Mesa 01",
     customer: "Heionekm",
-    item: "1x carne espeto",
+    item: "1x carne no espeto",
     total: "R$ 25,00",
   },
   {

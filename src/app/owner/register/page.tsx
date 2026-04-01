@@ -8,17 +8,17 @@ export default function OwnerRegisterPage() {
         <header className="flex flex-col gap-4 rounded-[30px] border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Link href="/" className="text-xs uppercase tracking-[0.32em] text-[var(--gold)]">
-              voltar para inicio
+              voltar para o início
             </Link>
             <h1 className="mt-3 font-display text-3xl sm:text-4xl">
-              Cadastro do proprietario
+              Cadastro do estabelecimento
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)] sm:text-base">
-              Tela dedicada para criar a conta do responsável e iniciar o cadastro do estabelecimento.
+              Informe os dados principais do seu negócio para iniciar o cadastro e seguir para a próxima etapa.
             </p>
           </div>
           <div className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-[var(--muted)]">
-            rota exclusiva
+            etapa inicial
           </div>
         </header>
 

@@ -10,33 +10,18 @@ export default function Home() {
   return (
     <main className="min-h-screen max-w-[100vw] overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-4 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
-        <header className="flex flex-col gap-3 rounded-[28px] border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:rounded-full sm:px-5 sm:py-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.32em] text-[var(--gold)]">
-              acesso proprietario
-            </p>
-            <p className="mt-1 text-sm text-[var(--muted)]">
-              entrada institucional da plataforma
-            </p>
-          </div>
-          <div className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-[var(--muted)]">
-            apresentacao limpa
-          </div>
-        </header>
-
         <section className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
           <div className="space-y-7 rounded-[36px] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,196,82,0.18),_transparent_24%),linear-gradient(180deg,rgba(18,24,36,0.96),rgba(9,12,19,0.98))] p-6 shadow-[0_35px_90px_rgba(0,0,0,0.42)] sm:p-9">
             <span className="inline-flex rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--gold)]">
-              home do proprietario
+              cadastro de estabelecimentos
             </span>
 
             <div className="space-y-4">
               <h1 className="max-w-2xl font-display text-4xl font-semibold leading-none sm:text-6xl">
-                Plataforma pronta para cadastro, operacao e crescimento.
+                Tudo o que você precisa para cadastrar, divulgar e vender mais.
               </h1>
               <p className="max-w-xl text-base leading-7 text-[var(--muted)] sm:text-lg">
-                A rota principal agora serve apenas como apresentação e entrada do sistema.
-                Cadastro e login foram separados para deixar a jornada mais clara e profissional.
+                Cadastre seu estabelecimento, organize seus produtos e prepare sua operação para atrair clientes com mais praticidade.
               </p>
             </div>
 
@@ -55,7 +40,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="flex flex-col gap-4 sm:flex-row">
               {ownerBenefits.map((benefit) => (
                 <BenefitCard key={benefit.title} benefit={benefit} />
               ))}
@@ -67,31 +52,19 @@ export default function Home() {
               <div className="mb-4 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-                    estrutura da jornada
+                    como funciona
                   </p>
                   <p className="mt-1 text-sm text-[var(--muted)]">
-                    a home apresenta o produto e direciona para a rota certa
+                    três passos simples para começar a vender
                   </p>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-[var(--muted)]">
-                  entrada
+                  início rápido
                 </div>
               </div>
 
               <div className="rounded-[28px] border border-white/8 bg-[var(--panel)] p-5">
-                <div className="rounded-[24px] bg-[linear-gradient(135deg,#ff8b36,#ff5f6d_58%,#31c4c0)] p-5 text-white">
-                  <p className="text-xs uppercase tracking-[0.24em] text-white/75">
-                    fluxo recomendado
-                  </p>
-                  <h3 className="mt-2 font-display text-3xl">
-                    Primeiro acesso. Depois onboarding. Depois operacao.
-                  </h3>
-                  <p className="mt-2 text-sm text-white/80">
-                    O painel interno não aparece mais aqui. Isso reduz ruído e melhora a leitura para cliente e apresentação.
-                  </p>
-                </div>
-
-                <div className="mt-4 grid gap-3">
+                <div className="grid gap-3">
                   {ownerStartSteps.map((step) => (
                     <StepCard key={step.id} step={step} />
                   ))}
@@ -102,18 +75,18 @@ export default function Home() {
             <section className="rounded-[36px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
               <div className="rounded-[28px] border border-white/8 bg-[var(--panel)] p-5">
                 <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-                  rotas de acesso
+                  acessos disponíveis
                 </p>
                 <div className="mt-4 grid gap-3">
                   <AccessRow
                     href="/owner/register"
-                    title="Cadastro do proprietario"
-                    text="Tela dedicada para criar conta e validar os dados iniciais."
+                    title="Cadastro do proprietário"
+                    text="Crie sua conta e informe os dados iniciais do seu estabelecimento."
                   />
                   <AccessRow
                     href="/owner/login"
-                    title="Login do proprietario"
-                    text="Tela dedicada para entrar no ambiente logado de operacao."
+                    title="Login do proprietário"
+                    text="Acesse sua conta para gerenciar produtos, campanhas e atendimento."
                   />
                 </div>
               </div>
@@ -127,7 +100,7 @@ export default function Home() {
 
 function BenefitCard({ benefit }: { benefit: OwnerBenefit }) {
   return (
-    <div className="min-w-0 overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-4 backdrop-blur-sm sm:p-5">
+    <div className="min-w-0 flex-1 overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-4 backdrop-blur-sm sm:p-5">
       <div className="flex h-full flex-col items-center text-center">
         <div className="mb-4">
           <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(255,139,54,0.22),rgba(255,95,109,0.2))] text-2xl shadow-[0_10px_25px_rgba(255,95,109,0.12)]">

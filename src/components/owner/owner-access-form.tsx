@@ -7,7 +7,9 @@ import { useMemo, useState } from "react";
 type AccessMode = "register" | "login";
 
 type RegisterForm = {
-  name: string;
+  establishmentName: string;
+  cnpj: string;
+  ownerName: string;
   email: string;
   phone: string;
   cep: string;
@@ -32,7 +34,9 @@ type AddressForm = {
 type FormErrors<T extends string> = Partial<Record<T, string>>;
 
 const initialRegisterForm: RegisterForm = {
-  name: "",
+  establishmentName: "",
+  cnpj: "",
+  ownerName: "",
   email: "",
   phone: "",
   cep: "",
@@ -70,7 +74,9 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
 
   const registerProgress = useMemo(() => {
     const requiredChecks = [
-      registerForm.name.trim(),
+      registerForm.establishmentName.trim(),
+      registerForm.cnpj.replace(/\D/g, "").length === 14,
+      registerForm.ownerName.trim(),
       registerForm.email.trim(),
       registerForm.phone.replace(/\D/g, "").length >= 10,
       registerForm.cep.replace(/\D/g, "").length === 8,
@@ -122,6 +128,18 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
     updateRegisterField("phone", digits);
   };
 
+  const handleCnpjChange = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 14);
+    let formatted = digits;
+
+    if (digits.length > 2) formatted = formatted.replace(/^(\d{2})(\d)/, "$1.$2");
+    if (digits.length > 5) formatted = formatted.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+    if (digits.length > 8) formatted = formatted.replace(/\.(\d{3})(\d)/, ".$1/$2");
+    if (digits.length > 12) formatted = formatted.replace(/(\d{4})(\d)/, "$1-$2");
+
+    updateRegisterField("cnpj", formatted);
+  };
+
   const handleCepChange = async (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 8);
     const formatted = digits.length > 5 ? digits.replace(/^(\d{5})(\d)/, "$1-$2") : digits;
@@ -164,9 +182,17 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
   const validateRegister = () => {
     const errors: FormErrors<keyof RegisterForm | keyof AddressForm> = {};
 
-    if (!registerForm.name.trim()) errors.name = "Informe o nome do responsável.";
+    if (!registerForm.establishmentName.trim()) {
+      errors.establishmentName = "Informe o nome do estabelecimento.";
+    }
+    if (registerForm.cnpj.replace(/\D/g, "").length !== 14) {
+      errors.cnpj = "Digite um CNPJ válido com 14 números.";
+    }
+    if (!registerForm.ownerName.trim()) {
+      errors.ownerName = "Informe o nome do responsável.";
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
-      errors.email = "Digite um email válido.";
+      errors.email = "Digite um e-mail válido.";
     }
     if (registerForm.phone.replace(/\D/g, "").length < 10) {
       errors.phone = "Informe um telefone com DDD.";
@@ -194,7 +220,7 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
     const errors: FormErrors<keyof LoginForm> = {};
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginForm.email)) {
-      errors.email = "Digite um email válido.";
+      errors.email = "Digite um e-mail válido.";
     }
     if (loginForm.password.length < 8) {
       errors.password = "A senha precisa ter pelo menos 8 caracteres.";
@@ -211,14 +237,14 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
       return;
     }
 
-    setSubmitMessage("Cadastro validado. Redirecionando para o onboarding do estabelecimento...");
+    setSubmitMessage("Cadastro validado. Redirecionando para a próxima etapa...");
     router.push("/owner/onboarding");
   };
 
   const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!validateLogin()) {
-      setSubmitMessage("Preencha email e senha corretamente para entrar.");
+      setSubmitMessage("Preencha e-mail e senha corretamente para entrar.");
       return;
     }
 
@@ -246,12 +272,12 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
         <div className="mb-4 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-              {mode === "register" ? "cadastro do proprietario" : "acesso do proprietario"}
+              {mode === "register" ? "cadastro do estabelecimento" : "acesso do proprietário"}
             </p>
             <p className="mt-1 text-sm text-[var(--muted)]">
               {mode === "register"
-                ? "cadastre a conta do responsavel e prepare o estabelecimento"
-                : "entre para acessar dashboard, mesas e comandas"}
+                ? "preencha os dados principais do negócio e do responsável"
+                : "entre para acessar produtos, campanhas, mesas e comandas"}
             </p>
           </div>
           <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-[var(--muted)]">
@@ -262,28 +288,50 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
         <div className="rounded-[28px] border border-white/8 bg-[var(--panel)] p-5">
           {mode === "register" ? (
             <form className="space-y-4" onSubmit={handleRegisterSubmit}>
-              <ValidatedInput
-                label="Nome do responsavel"
-                value={registerForm.name}
-                onChange={(event) => updateRegisterField("name", event.target.value)}
-                placeholder="Ex: Mateus Vinicius"
-                error={registerErrors.name}
-              />
-              <ValidatedInput
-                label="Email"
-                type="email"
-                value={registerForm.email}
-                onChange={(event) => updateRegisterField("email", event.target.value)}
-                placeholder="voce@empresa.com"
-                error={registerErrors.email}
-              />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ValidatedInput
+                  label="Nome do estabelecimento"
+                  value={registerForm.establishmentName}
+                  onChange={(event) => updateRegisterField("establishmentName", event.target.value)}
+                  placeholder="Ex: Restaurante Sabor da Casa"
+                  hint="Digite o nome comercial que será exibido para seus clientes."
+                  error={registerErrors.establishmentName}
+                />
+                <ValidatedInput
+                  label="CNPJ"
+                  value={registerForm.cnpj}
+                  onChange={(event) => handleCnpjChange(event.target.value)}
+                  placeholder="00.000.000/0000-00"
+                  hint="Informe o CNPJ do estabelecimento com 14 números."
+                  error={registerErrors.cnpj}
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ValidatedInput
+                  label="Nome do responsável"
+                  value={registerForm.ownerName}
+                  onChange={(event) => updateRegisterField("ownerName", event.target.value)}
+                  placeholder="Ex: Mateus Vinicius"
+                  error={registerErrors.ownerName}
+                />
+                <ValidatedInput
+                  label="E-mail"
+                  type="email"
+                  value={registerForm.email}
+                  onChange={(event) => updateRegisterField("email", event.target.value)}
+                  placeholder="voce@empresa.com"
+                  error={registerErrors.email}
+                />
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <ValidatedInput
                   label="Telefone"
                   value={registerForm.phone}
                   onChange={(event) => handlePhoneChange(event.target.value)}
                   placeholder="(00) 00000-0000"
-                  hint="Use DDD e número principal para contato."
+                  hint="Use DDD e o principal número de contato."
                   error={registerErrors.phone}
                 />
                 <ValidatedInput
@@ -295,6 +343,7 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
                   error={registerErrors.cep}
                 />
               </div>
+
               <div className="rounded-[24px] border border-white/8 bg-white/4 p-4">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -325,6 +374,7 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
                   />
                 </div>
               </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <ValidatedInput
                   label="Senha"
@@ -359,7 +409,7 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
               </button>
 
               <p className="text-center text-xs leading-6 text-[var(--muted)]">
-                Próximo passo: abrir o onboarding do estabelecimento já com os dados básicos validados.
+                Próximo passo: concluir o onboarding do estabelecimento com os dados básicos já validados.
               </p>
 
               <p className="text-center text-sm text-[var(--muted)]">
@@ -372,7 +422,7 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
           ) : (
             <form className="space-y-4" onSubmit={handleLoginSubmit}>
               <ValidatedInput
-                label="Email"
+                label="E-mail"
                 type="email"
                 value={loginForm.email}
                 onChange={(event) => updateLoginField("email", event.target.value)}
@@ -418,7 +468,7 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
           <div className="w-full max-w-xl rounded-[28px] border border-white/10 bg-[var(--panel)] p-6 shadow-2xl sm:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h3 className="font-display text-2xl">Endereço do local</h3>
+                <h3 className="font-display text-2xl">Endereço do estabelecimento</h3>
                 <p className="mt-1 text-sm text-[var(--muted)]">
                   Complete ou revise os dados do CEP {registerForm.cep || "informado"}.
                 </p>
@@ -442,7 +492,7 @@ export function OwnerAccessForm({ mode }: { mode: AccessMode }) {
                 />
               </div>
               <ValidatedInput
-                label="Numero"
+                label="Número"
                 value={address.numero}
                 onChange={(event) => updateAddressField("numero", event.target.value)}
                 error={registerErrors.numero}
