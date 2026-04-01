@@ -1,58 +1,95 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import {
-  ownerCommands,
   ownerDashboardActions,
-  ownerDashboardCommandsIntro,
   ownerDashboardHeader,
   ownerDashboardMetrics,
-  ownerDashboardRoadmap,
-  ownerDashboardRoadmapIntro,
+  ownerDashboardNav,
+  ownerDashboardRouteSpotlights,
+  ownerDashboardRoutesIntro,
   ownerDashboardSummaryIntro,
-  ownerDashboardTablesIntro,
-  ownerTables,
 } from "@/data/owner-data";
 import type {
-  DashboardRoadmapItem,
   DashboardSectionIntro,
   OwnerAction,
-  OwnerCommand,
   OwnerMetric,
-  OwnerTable,
+  OwnerNavItem,
+  OwnerRouteSpotlight,
 } from "@/types/owner";
 
 export default function OwnerDashboardPage() {
-  const availableTables = ownerTables.filter((table) => table.status !== "Bloqueada");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-4 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
-        <header className="flex flex-col gap-4 rounded-[30px] border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-3">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+        <nav className="sticky top-0 z-40 rounded-[26px] border border-white/10 bg-[rgba(10,13,20,0.92)] px-4 py-3 shadow-[0_24px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">99start</p>
+              <p className="mt-1 text-sm text-white">{ownerDashboardHeader.status}</p>
+            </div>
+
+            <div className="hidden items-center gap-2 md:flex">
+              {ownerDashboardNav.map((item) => (
+                <DesktopNavLink key={item.href} item={item} />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-xl text-white md:hidden"
+              aria-label="Abrir menu"
+            >
+              ☰
+            </button>
+          </div>
+        </nav>
+
+        {drawerOpen ? (
+          <div className="fixed inset-0 z-50 bg-[#050505]/70 backdrop-blur-sm md:hidden" onClick={() => setDrawerOpen(false)}>
+            <div className="ml-auto flex h-full w-[84vw] max-w-sm flex-col border-l border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.98),rgba(10,13,20,0.99))] p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">menu</p>
+                  <p className="mt-1 text-sm text-white">{ownerDashboardHeader.title}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDrawerOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-lg text-white"
+                  aria-label="Fechar menu"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="mt-6 grid gap-3">
+                {ownerDashboardNav.map((item) => (
+                  <MobileNavLink key={item.href} item={item} onNavigate={() => setDrawerOpen(false)} />
+                ))}
+              </div>
+
+              <div className="mt-6 rounded-[24px] border border-emerald-400/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+                {ownerDashboardHeader.status}
+              </div>
+
               <Link
                 href={ownerDashboardHeader.backHref}
-                className="text-xs uppercase tracking-[0.32em] text-[var(--gold)]"
+                onClick={() => setDrawerOpen(false)}
+                className="mt-auto rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-center text-sm font-semibold text-white"
               >
                 {ownerDashboardHeader.backLabel}
               </Link>
-              <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
-                {ownerDashboardHeader.badge}
-              </span>
             </div>
-            <h1 className="mt-3 font-display text-3xl sm:text-4xl">
-              {ownerDashboardHeader.title}
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)] sm:text-base">
-              {ownerDashboardHeader.description}
-            </p>
           </div>
-          <div className="w-fit rounded-full border border-white/10 bg-emerald-500/12 px-4 py-2 text-sm text-emerald-300">
-            {ownerDashboardHeader.status}
-          </div>
-        </header>
+        ) : null}
 
-        <section className="flex flex-col gap-6 lg:grid lg:grid-cols-[1.08fr_0.92fr]">
-          <section className="order-1 lg:order-1 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,196,82,0.16),_transparent_24%),linear-gradient(180deg,rgba(18,24,36,0.96),rgba(9,12,19,0.98))] p-5 shadow-[0_35px_90px_rgba(0,0,0,0.42)] sm:p-6">
+        <section className="grid gap-6 lg:grid-cols-[1.02fr_0.98fr]">
+          <section className="order-1 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,196,82,0.16),_transparent_24%),linear-gradient(180deg,rgba(18,24,36,0.96),rgba(9,12,19,0.98))] p-5 shadow-[0_35px_90px_rgba(0,0,0,0.42)] sm:p-6">
             <SectionHeader intro={ownerDashboardSummaryIntro} />
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -68,39 +105,12 @@ export default function OwnerDashboardPage() {
             </div>
           </section>
 
-          <section className="order-2 lg:order-3 flex h-full flex-col rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
-            <SectionHeader intro={ownerDashboardCommandsIntro} withAction />
+          <section className="order-2 rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)] sm:p-5">
+            <SectionHeader intro={ownerDashboardRoutesIntro} />
 
-            <div className="grid gap-3">
-              {ownerCommands.map((command) => (
-                <CommandCard key={command.code} command={command} />
-              ))}
-            </div>
-          </section>
-
-          <section className="order-3 lg:order-2 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
-            <SectionHeader intro={ownerDashboardTablesIntro} />
-
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {availableTables.map((table) => (
-                <TableCard key={table.number} table={table} />
-              ))}
-            </div>
-          </section>
-
-          <section className="order-4 lg:order-4 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
-            <div className="mb-4 px-2">
-              <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-                {ownerDashboardRoadmapIntro.eyebrow}
-              </p>
-              <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
-                {ownerDashboardRoadmapIntro.description}
-              </p>
-            </div>
-
-            <div className="grid gap-3">
-              {ownerDashboardRoadmap.map((item) => (
-                <RoadmapRow key={item.step} item={item} />
+            <div className="grid gap-4">
+              {ownerDashboardRouteSpotlights.map((item) => (
+                <RouteSpotlightCard key={item.href} item={item} />
               ))}
             </div>
           </section>
@@ -110,13 +120,32 @@ export default function OwnerDashboardPage() {
   );
 }
 
-function SectionHeader({
-  intro,
-  withAction = false,
-}: {
-  intro: DashboardSectionIntro;
-  withAction?: boolean;
-}) {
+function DesktopNavLink({ item }: { item: OwnerNavItem }) {
+  return (
+    <Link
+      href={item.href}
+      className="flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-[var(--muted)] transition hover:bg-white/10 hover:text-white"
+    >
+      <span aria-hidden="true">{item.icon}</span>
+      <span>{item.shortLabel || item.label}</span>
+    </Link>
+  );
+}
+
+function MobileNavLink({ item, onNavigate }: { item: OwnerNavItem; onNavigate: () => void }) {
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      className="flex items-center gap-3 rounded-[22px] border border-white/10 bg-white/6 px-4 py-4 text-sm font-semibold text-white"
+    >
+      <span className="text-lg" aria-hidden="true">{item.icon}</span>
+      <span>{item.label}</span>
+    </Link>
+  );
+}
+
+function SectionHeader({ intro }: { intro: DashboardSectionIntro }) {
   return (
     <div className="mb-4 flex flex-col gap-3 px-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
       <div>
@@ -133,13 +162,7 @@ function SectionHeader({
         </p>
       </div>
 
-      {withAction && intro.actionLabel ? (
-        <button className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-semibold text-[var(--text)]">
-          {intro.actionLabel}
-        </button>
-      ) : null}
-
-      {!withAction && intro.badge ? (
+      {intro.badge ? (
         <div className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-[var(--muted)]">
           {intro.badge}
         </div>
@@ -184,73 +207,29 @@ function ActionCard({ action }: { action: OwnerAction }) {
   );
 }
 
-function CommandCard({ command }: { command: OwnerCommand }) {
-  return (
-    <div className="rounded-[24px] border border-white/8 bg-white/4 p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="font-semibold">{command.code}</p>
-          <p className="mt-1 text-sm text-[var(--muted)]">{command.customer}</p>
-          <p className="mt-1 text-sm text-[var(--muted)]">{command.location}</p>
-        </div>
-        <div className="flex flex-col gap-2 sm:items-end">
-          <span className="w-fit rounded-full bg-white/8 px-3 py-1 text-xs text-[var(--muted)]">
-            {command.status}
-          </span>
-          <span className="font-display text-2xl text-[var(--gold)]">
-            {command.total}
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-        <Link
-          href="/owner/tabs"
-          className="rounded-2xl bg-[linear-gradient(135deg,#386df9,#24c6dc)] px-4 py-2 text-center text-sm font-semibold text-white"
-        >
-          Ver detalhes
-        </Link>
-        <Link
-          href="/owner/tabs"
-          className="rounded-2xl border border-white/10 bg-white/6 px-4 py-2 text-center text-sm font-semibold text-[var(--text)]"
-        >
-          Marcar como paga
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function TableCard({ table }: { table: OwnerTable }) {
-  const statusClass: Record<string, string> = {
-    Livre: "bg-emerald-500/14 text-emerald-300",
-    Ocupada: "bg-amber-500/14 text-amber-200",
-    Reservada: "bg-sky-500/14 text-sky-200",
-  };
-
+function RouteSpotlightCard({ item }: { item: OwnerRouteSpotlight }) {
   return (
     <Link
-      href="/owner/tables"
-      className="block rounded-[24px] border border-white/8 bg-white/4 p-4 text-center"
+      href={item.href}
+      className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-5 transition hover:bg-white/8"
     >
-      <p className="font-display text-3xl">{table.number}</p>
-      <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs ${statusClass[table.status]}`}>
-        {table.status}
-      </span>
-    </Link>
-  );
-}
-
-function RoadmapRow({ item }: { item: DashboardRoadmapItem }) {
-  return (
-    <div className="grid grid-cols-[auto_1fr] gap-4 rounded-[24px] border border-white/8 bg-white/4 p-4">
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--gold)] font-display text-lg text-[#2f2100]">
-        {item.step}
-      </span>
-      <div>
-        <p className="font-display text-xl">{item.title}</p>
-        <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-4">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(255,139,54,0.22),rgba(56,109,249,0.22))] text-2xl">
+            {item.icon}
+          </span>
+          <div>
+            <p className="font-display text-2xl text-white">{item.title}</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
+          </div>
+        </div>
+        <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-[var(--muted)]">
+          {item.badge}
+        </span>
       </div>
-    </div>
+      <div className="mt-5 inline-flex rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-semibold text-white">
+        {item.cta}
+      </div>
+    </Link>
   );
 }

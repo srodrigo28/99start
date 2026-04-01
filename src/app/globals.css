@@ -44,3 +44,82 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+@media print {
+  :root {
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --text: #111111;
+    --muted: #555555;
+    --gold: #111111;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-receipt-shell,
+  .print-receipt-shell * {
+    visibility: visible;
+  }
+
+  .print-receipt-shell {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none !important;
+    border: 0 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-receipt-card {
+    margin: 0 auto !important;
+    border: 0 !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    box-shadow: none !important;
+  }
+
+  .print-receipt-card * {
+    color: #111111 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .print-hide {
+    display: none !important;
+  }
+
+  .print-format-thermal-58 .print-receipt-card {
+    width: 58mm !important;
+    max-width: 58mm !important;
+    font-size: 11px !important;
+  }
+
+  .print-format-thermal-80 .print-receipt-card {
+    width: 80mm !important;
+    max-width: 80mm !important;
+    font-size: 12px !important;
+  }
+
+  .print-format-a4 .print-receipt-card {
+    width: 180mm !important;
+    max-width: 180mm !important;
+    font-size: 13px !important;
+  }
+
+  @page {
+    margin: 8mm;
+    size: auto;
+  }
+}

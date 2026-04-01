@@ -43,6 +43,36 @@ export type OwnerAction = {
   tone: "warm" | "cool" | "mint" | "neutral";
 };
 
+export type OwnerCardAction = {
+  href: string;
+  label: string;
+  tone: "primary" | "secondary";
+};
+
+export type OwnerNavItem = {
+  href: string;
+  label: string;
+  shortLabel?: string;
+  icon: string;
+};
+
+export type OwnerRouteSpotlight = {
+  href: string;
+  icon: string;
+  title: string;
+  text: string;
+  badge: string;
+  cta: string;
+};
+
+export type OwnerSettingsSection = {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  fields: string[];
+};
+
 export type CommandStatus = "Ativa" | "Fechando" | "Pagamento";
 
 export type OwnerCommand = {
@@ -53,6 +83,7 @@ export type OwnerCommand = {
   status: CommandStatus;
   createdAt?: string;
   items?: { name: string; price: string }[];
+  actions?: OwnerCardAction[];
 };
 
 export type TableStatus = "Livre" | "Ocupada" | "Reservada" | "Bloqueada";
@@ -63,6 +94,7 @@ export type OwnerTable = {
   status: TableStatus;
   orders: number;
   total?: string;
+  href?: string;
 };
 
 export type TableAlert = {
@@ -93,4 +125,24 @@ export type DashboardSectionIntro = {
   description: string;
   badge?: string;
   actionLabel?: string;
+};
+
+export type AdminNavItem = {
+  href: string;
+  label: string;
+  icon: string;
+};
+
+export type AdminEstablishment = {
+  name: string;
+  city: string;
+  category: string;
+  status: string;
+  slug: string;
+};
+
+export type AdminQueueItem = {
+  title: string;
+  text: string;
+  tone: "gold" | "blue" | "rose";
 };

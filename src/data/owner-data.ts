@@ -1,4 +1,7 @@
 import type {
+  AdminEstablishment,
+  AdminNavItem,
+  AdminQueueItem,
   DashboardHeader,
   DashboardRoadmapItem,
   DashboardSectionIntro,
@@ -9,6 +12,9 @@ import type {
   OwnerBenefit,
   OwnerCommand,
   OwnerMetric,
+  OwnerNavItem,
+  OwnerRouteSpotlight,
+  OwnerSettingsSection,
   OwnerStep,
   OwnerTable,
   TableAlert,
@@ -46,14 +52,21 @@ export const ownerStartSteps: OwnerStep[] = [
 ];
 
 export const ownerDashboardHeader: DashboardHeader = {
-  backHref: "/owner/onboarding",
-  backLabel: "voltar para onboarding",
+  backHref: "/owner/settings",
+  backLabel: "ir para configurações",
   badge: "dashboard",
   title: "Painel do proprietário",
   description:
     "Estrutura desenhada primeiro para leitura rápida no celular e depois expandida em blocos para desktop. Aqui o dono do local enxerga operação, mesas e comandas sem perder prioridade.",
   status: "Saraiva Bar ativo",
 };
+
+export const ownerDashboardNav: OwnerNavItem[] = [
+  { href: "/owner/dashboard", label: "Dashboard", shortLabel: "Início", icon: "🏠" },
+  { href: "/owner/tables", label: "Mesas", icon: "🍽️" },
+  { href: "/owner/tabs", label: "Comandas", icon: "🧾" },
+  { href: "/owner/settings", label: "Configurações", shortLabel: "Config.", icon: "⚙️" },
+];
 
 export const ownerDashboardSummaryIntro: DashboardSectionIntro = {
   eyebrow: "resumo operacional",
@@ -62,23 +75,54 @@ export const ownerDashboardSummaryIntro: DashboardSectionIntro = {
   badge: "visão do dia",
 };
 
-export const ownerDashboardCommandsIntro: DashboardSectionIntro = {
-  eyebrow: "comandas ativas",
-  description: "prioridade visual para o que impacta caixa e operação",
-  actionLabel: "Filtrar estabelecimento",
+export const ownerDashboardRoutesIntro: DashboardSectionIntro = {
+  eyebrow: "atalhos principais",
+  title: "Acesse cada área no detalhe.",
+  description: "Use o dashboard como resumo e entre nas rotas específicas para operar com mais foco.",
 };
 
-export const ownerDashboardTablesIntro: DashboardSectionIntro = {
-  eyebrow: "gerenciamento de mesas",
-  description: "grade simples no celular e leitura ampliada no desktop",
-  badge: "20 mesas",
-};
+export const ownerDashboardRouteSpotlights: OwnerRouteSpotlight[] = [
+  {
+    href: "/owner/tabs",
+    icon: "🧾",
+    title: "Comandas ativas",
+    text: "Abra a rota completa para ver itens, totais, histórico e ações de pagamento.",
+    badge: "8 comandas",
+    cta: "Abrir comandas",
+  },
+  {
+    href: "/owner/tables",
+    icon: "🍽️",
+    title: "Mesas",
+    text: "Entre na visão dedicada para acompanhar status, ocupação, pedidos e detalhes por mesa.",
+    badge: "20 mesas",
+    cta: "Abrir mesas",
+  },
+];
 
-export const ownerDashboardRoadmapIntro: DashboardSectionIntro = {
-  eyebrow: "próximas áreas",
-  description:
-    "Depois desta tela, as próximas rotas mais naturais são mesas e controle de comandas em detalhe. O layout já está preparado para reaproveitar cards, métricas e status.",
-};
+export const ownerSettingsSections: OwnerSettingsSection[] = [
+  {
+    id: "store",
+    icon: "🏪",
+    title: "Dados da loja",
+    description: "Informações principais do estabelecimento e recebimentos.",
+    fields: ["Nome da loja", "CNPJ", "Telefone", "Responsável", "E-mail", "Chave PIX"],
+  },
+  {
+    id: "address",
+    icon: "📍",
+    title: "Endereço e localização",
+    description: "Dados do endereço comercial e ponto do mapa.",
+    fields: ["CEP", "Rua", "Número", "Complemento", "Bairro", "Cidade", "UF", "Localização"],
+  },
+  {
+    id: "brand",
+    icon: "🖼️",
+    title: "Logo, slug e categorias",
+    description: "Identidade da marca e segmentação do negócio.",
+    fields: ["Logo da empresa", "Slug público", "Categorias do estabelecimento"],
+  },
+];
 
 export const ownerDashboardMetrics: OwnerMetric[] = [
   {
@@ -133,9 +177,9 @@ export const ownerPreviewMetrics: OwnerMetric[] = [
 
 export const ownerDashboardActions: OwnerAction[] = [
   {
-    href: "/owner/onboarding",
-    title: "Novo estabelecimento",
-    text: "Iniciar ou ajustar o cadastro do local",
+    href: "/owner/settings",
+    title: "Configurações da loja",
+    text: "Atualizar dados, recebimentos, endereço e identidade",
     tone: "warm",
   },
   {
@@ -212,6 +256,10 @@ export const ownerCommands: OwnerCommand[] = [
     total: "R$ 27,00",
     status: "Ativa",
     items: [{ name: "3x carne no espeto", price: "R$ 27,00" }],
+    actions: [
+      { href: "/owner/tabs", label: "Ver detalhes", tone: "primary" },
+      { href: "/owner/tabs", label: "Marcar como paga", tone: "secondary" },
+    ],
   },
   {
     code: "#1766423921796",
@@ -223,6 +271,10 @@ export const ownerCommands: OwnerCommand[] = [
     items: [
       { name: "3x heionekm", price: "R$ 75,00" },
       { name: "1x carne no espeto", price: "R$ 9,00" },
+    ],
+    actions: [
+      { href: "/owner/tabs", label: "Ver detalhes", tone: "primary" },
+      { href: "/owner/tabs", label: "Marcar como paga", tone: "secondary" },
     ],
   },
   {
@@ -237,16 +289,20 @@ export const ownerCommands: OwnerCommand[] = [
       { name: "1x refrigerante em lata", price: "R$ 12,00" },
       { name: "1x batata rústica", price: "R$ 20,10" },
     ],
+    actions: [
+      { href: "/owner/tabs", label: "Ver detalhes", tone: "primary" },
+      { href: "/owner/tabs", label: "Marcar como paga", tone: "secondary" },
+    ],
   },
 ];
 
 export const ownerTables: OwnerTable[] = [
-  { number: "01", seats: 4, status: "Ocupada", orders: 2, total: "R$ 25,00" },
-  { number: "02", seats: 4, status: "Livre", orders: 0 },
-  { number: "03", seats: 2, status: "Livre", orders: 0 },
-  { number: "04", seats: 6, status: "Reservada", orders: 0 },
-  { number: "05", seats: 4, status: "Ocupada", orders: 3, total: "R$ 72,00" },
-  { number: "06", seats: 8, status: "Bloqueada", orders: 0 },
+  { number: "01", seats: 4, status: "Ocupada", orders: 2, total: "R$ 25,00", href: "/owner/tables" },
+  { number: "02", seats: 4, status: "Livre", orders: 0, href: "/owner/tables" },
+  { number: "03", seats: 2, status: "Livre", orders: 0, href: "/owner/tables" },
+  { number: "04", seats: 6, status: "Reservada", orders: 0, href: "/owner/tables" },
+  { number: "05", seats: 4, status: "Ocupada", orders: 3, total: "R$ 72,00", href: "/owner/tables" },
+  { number: "06", seats: 8, status: "Bloqueada", orders: 0, href: "/owner/tables" },
 ];
 
 export const ownerTableAlerts: TableAlert[] = [
@@ -262,4 +318,57 @@ export const ownerTableAlerts: TableAlert[] = [
     item: "2x picanha na chapa",
     total: "R$ 72,00",
   },
+];
+
+export const adminNav: AdminNavItem[] = [
+  { href: "/admin", label: "Visão geral", icon: "🛡️" },
+  { href: "/owner/dashboard", label: "Painel da loja", icon: "🏪" },
+  { href: "/owner/settings", label: "Configurações", icon: "⚙️" },
+];
+
+export const adminHeader: DashboardHeader = {
+  backHref: "/owner/dashboard",
+  backLabel: "voltar para o dashboard da loja",
+  badge: "admin",
+  title: "Admin geral",
+  description: "Área pensada para controlar múltiplos estabelecimentos, acompanhar pendências e preparar a operação para contratos reais de API.",
+  status: "3 estabelecimentos monitorados",
+};
+
+export const adminSummaryIntro: DashboardSectionIntro = {
+  eyebrow: "controle global",
+  title: "Tudo que precisa de decisão rápida.",
+  description: "Acompanhe o volume de lojas, pendências e categorias sem depender do painel individual de cada estabelecimento.",
+  badge: "visão central",
+};
+
+export const adminMetrics: OwnerMetric[] = [
+  { label: "Lojas ativas", value: "3", detail: "2 prontas para operar hoje", tone: "mint" },
+  { label: "Pendências", value: "5", detail: "cadastros, logos e validações", tone: "rose" },
+  { label: "Categorias", value: "12", detail: "segmentos públicos disponíveis", tone: "blue" },
+  { label: "Receita monitorada", value: "R$ 4,2 mil", detail: "somatório do dia nas lojas conectadas", tone: "gold" },
+];
+
+export const adminEstablishmentsIntro: DashboardSectionIntro = {
+  eyebrow: "estabelecimentos",
+  title: "Visão rápida das lojas cadastradas.",
+  description: "Cada card representa uma unidade pronta para receber status, filtros e ações administrativas via API.",
+};
+
+export const adminEstablishments: AdminEstablishment[] = [
+  { name: "Saraiva Bar", city: "Goiânia - GO", category: "Bar e música ao vivo", status: "Ativa", slug: "saraiva-bar" },
+  { name: "Quintal da Serra", city: "Anápolis - GO", category: "Espetaria", status: "Onboarding", slug: "quintal-da-serra" },
+  { name: "Café Horizonte", city: "Brasília - DF", category: "Cafeteria", status: "Revisão", slug: "cafe-horizonte" },
+];
+
+export const adminQueueIntro: DashboardSectionIntro = {
+  eyebrow: "fila administrativa",
+  title: "Próximas ações do admin.",
+  description: "Lista inicial de prioridades para validar cadastros, revisar identidade visual e organizar categorias globais.",
+};
+
+export const adminQueue: AdminQueueItem[] = [
+  { title: "Validar CNPJs pendentes", text: "Dois estabelecimentos ainda precisam de conferência documental antes da liberação completa.", tone: "gold" },
+  { title: "Revisar logos enviadas", text: "Uma loja enviou imagem fora do padrão e precisa de ajuste antes da publicação.", tone: "blue" },
+  { title: "Aprovar nova categoria", text: "Existe um pedido para incluir 'Adega' no catálogo global de categorias.", tone: "rose" },
 ];
