@@ -1,0 +1,31 @@
+Projeto: 99Start
+Objetivo: evoluir a aplicacao para uso real em celular com instalacao como PWA e testes de producao mobile.
+
+Fase 1 - Base PWA
+- Manifesto web configurado
+- Icones gerados para instalacao
+- Service worker registrado
+- Banner de instalacao para Android
+- Instrucao de instalacao manual para iPhone
+
+Fase 2 - Testes mobile de producao
+- Validar instalacao em Android Chrome
+- Validar instalacao em iPhone Safari
+- Testar login, onboarding, dashboard, mesas, comandas e tabs em telas pequenas
+- Revisar areas clicaveis, teclado virtual, scroll e safe-area
+- Confirmar comportamento offline minimo e reabertura do app instalado
+
+Fase 3 - Endurecimento para release
+- Ajustar icones finais da marca
+- Criar splash assets e melhorias visuais de app instalado
+- Adicionar estrategia de cache segura para assets estaticos
+- Definir analytics de uso mobile
+- Rodar Lighthouse PWA e auditoria de performance
+
+Checklist de homologacao
+- Abrir pelo navegador no celular
+- Receber opcao de instalar
+- Instalar sem erro
+- Abrir em tela cheia
+- Navegar entre rotas principais
+- Validar performance e estabilidade
