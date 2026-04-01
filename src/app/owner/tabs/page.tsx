@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { ownerCommands, type OwnerCommand } from "@/data/owner";
+import { ownerCommands } from "@/data/owner-data";
+import type { OwnerCommand } from "@/types/owner";
 
 export default function OwnerTabsPage() {
   return (
@@ -270,3 +271,4 @@ function CommandDetails() {
     </>
   );
 }
+

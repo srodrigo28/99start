@@ -1,76 +1,18 @@
-export type OwnerBenefit = {
-  icon: string;
-  title: string;
-  text: string;
-};
-
-export type OwnerStep = {
-  id: string;
-  title: string;
-  text: string;
-};
-
-export type OwnerMetricTone = "mint" | "gold" | "blue" | "rose";
-
-export type OwnerMetric = {
-  label: string;
-  value: string;
-  tone: OwnerMetricTone;
-  detail?: string;
-};
-
-export type OnboardingStage = {
-  number: string;
-  title: string;
-  description: string;
-};
-
-export type OnboardingField = {
-  label: string;
-  value: string;
-  hint?: string;
-};
-
-export type MenuDraft = {
-  category: string;
-  items: string[];
-};
-
-export type OwnerAction = {
-  href: string;
-  title: string;
-  text: string;
-  tone: "warm" | "cool" | "mint" | "neutral";
-};
-
-export type CommandStatus = "Ativa" | "Fechando" | "Pagamento";
-
-export type OwnerCommand = {
-  code: string;
-  customer: string;
-  location: string;
-  total: string;
-  status: CommandStatus;
-  createdAt?: string;
-  items?: { name: string; price: string }[];
-};
-
-export type TableStatus = "Livre" | "Ocupada" | "Reservada" | "Bloqueada";
-
-export type OwnerTable = {
-  number: string;
-  seats: number;
-  status: TableStatus;
-  orders: number;
-  total?: string;
-};
-
-export type TableAlert = {
-  table: string;
-  customer: string;
-  item: string;
-  total: string;
-};
+import type {
+  DashboardHeader,
+  DashboardRoadmapItem,
+  DashboardSectionIntro,
+  MenuDraft,
+  OnboardingField,
+  OnboardingStage,
+  OwnerAction,
+  OwnerBenefit,
+  OwnerCommand,
+  OwnerMetric,
+  OwnerStep,
+  OwnerTable,
+  TableAlert,
+} from "@/types/owner";
 
 export const ownerBenefits: OwnerBenefit[] = [
   {
@@ -103,6 +45,41 @@ export const ownerStartSteps: OwnerStep[] = [
   },
 ];
 
+export const ownerDashboardHeader: DashboardHeader = {
+  backHref: "/owner/onboarding",
+  backLabel: "voltar para onboarding",
+  badge: "dashboard",
+  title: "Painel do proprietário",
+  description:
+    "Estrutura desenhada primeiro para leitura rápida no celular e depois expandida em blocos para desktop. Aqui o dono do local enxerga operação, mesas e comandas sem perder prioridade.",
+  status: "Saraiva Bar ativo",
+};
+
+export const ownerDashboardSummaryIntro: DashboardSectionIntro = {
+  eyebrow: "resumo operacional",
+  title: "Visão do dia em um único painel.",
+  description: "visão do dia",
+  badge: "visão do dia",
+};
+
+export const ownerDashboardCommandsIntro: DashboardSectionIntro = {
+  eyebrow: "comandas ativas",
+  description: "prioridade visual para o que impacta caixa e operação",
+  actionLabel: "Filtrar estabelecimento",
+};
+
+export const ownerDashboardTablesIntro: DashboardSectionIntro = {
+  eyebrow: "gerenciamento de mesas",
+  description: "grade simples no celular e leitura ampliada no desktop",
+  badge: "20 mesas",
+};
+
+export const ownerDashboardRoadmapIntro: DashboardSectionIntro = {
+  eyebrow: "próximas áreas",
+  description:
+    "Depois desta tela, as próximas rotas mais naturais são mesas e controle de comandas em detalhe. O layout já está preparado para reaproveitar cards, métricas e status.",
+};
+
 export const ownerDashboardMetrics: OwnerMetric[] = [
   {
     label: "Receita hoje",
@@ -127,6 +104,24 @@ export const ownerDashboardMetrics: OwnerMetric[] = [
     value: "1",
     detail: "Cliente aguardando retorno",
     tone: "rose",
+  },
+];
+
+export const ownerDashboardRoadmap: DashboardRoadmapItem[] = [
+  {
+    step: "01",
+    title: "Tela de mesas em detalhe",
+    text: "Mapa visual por número, status e pedidos pendentes.",
+  },
+  {
+    step: "02",
+    title: "Tela de comanda detalhada",
+    text: "Itens, total, ação de marcar como paga e histórico.",
+  },
+  {
+    step: "03",
+    title: "Login do proprietário",
+    text: "Separar visualmente criar conta de entrar.",
   },
 ];
 

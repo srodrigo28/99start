@@ -2,15 +2,27 @@ import Link from "next/link";
 import {
   ownerCommands,
   ownerDashboardActions,
+  ownerDashboardCommandsIntro,
+  ownerDashboardHeader,
   ownerDashboardMetrics,
+  ownerDashboardRoadmap,
+  ownerDashboardRoadmapIntro,
+  ownerDashboardSummaryIntro,
+  ownerDashboardTablesIntro,
   ownerTables,
-  type OwnerAction,
-  type OwnerCommand,
-  type OwnerMetric,
-  type OwnerTable,
-} from "@/data/owner";
+} from "@/data/owner-data";
+import type {
+  DashboardRoadmapItem,
+  DashboardSectionIntro,
+  OwnerAction,
+  OwnerCommand,
+  OwnerMetric,
+  OwnerTable,
+} from "@/types/owner";
 
 export default function OwnerDashboardPage() {
+  const availableTables = ownerTables.filter((table) => table.status !== "Bloqueada");
+
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-4 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
@@ -18,137 +30,121 @@ export default function OwnerDashboardPage() {
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <Link
-                href="/owner/onboarding"
+                href={ownerDashboardHeader.backHref}
                 className="text-xs uppercase tracking-[0.32em] text-[var(--gold)]"
               >
-                voltar para onboarding
+                {ownerDashboardHeader.backLabel}
               </Link>
               <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
-                dashboard
+                {ownerDashboardHeader.badge}
               </span>
             </div>
             <h1 className="mt-3 font-display text-3xl sm:text-4xl">
-              Painel do proprietario
+              {ownerDashboardHeader.title}
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)] sm:text-base">
-              Estrutura desenhada primeiro para leitura rapida no celular e
-              depois expandida em blocos para desktop. Aqui o dono do local
-              enxerga operacao, mesas e comandas sem perder prioridade.
+              {ownerDashboardHeader.description}
             </p>
           </div>
           <div className="w-fit rounded-full border border-white/10 bg-emerald-500/12 px-4 py-2 text-sm text-emerald-300">
-            Saraiva Bar ativo
+            {ownerDashboardHeader.status}
           </div>
         </header>
 
         <section className="flex flex-col gap-6 lg:grid lg:grid-cols-[1.08fr_0.92fr]">
           <section className="order-1 lg:order-1 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,196,82,0.16),_transparent_24%),linear-gradient(180deg,rgba(18,24,36,0.96),rgba(9,12,19,0.98))] p-5 shadow-[0_35px_90px_rgba(0,0,0,0.42)] sm:p-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-                    resumo operacional
-                  </p>
-                  <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-                    Visao do dia em um unico painel.
-                  </h2>
-                </div>
-                <div className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-[var(--muted)]">
-                  visao do dia
-                </div>
-              </div>
+            <SectionHeader intro={ownerDashboardSummaryIntro} />
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {ownerDashboardMetrics.map((metric) => (
-                  <MetricCard key={metric.label} metric={metric} />
-                ))}
-              </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {ownerDashboardMetrics.map((metric) => (
+                <MetricCard key={metric.label} metric={metric} />
+              ))}
+            </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                {ownerDashboardActions.map((action) => (
-                  <ActionCard key={action.title} action={action} />
-                ))}
-              </div>
-            </section>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {ownerDashboardActions.map((action) => (
+                <ActionCard key={action.title} action={action} />
+              ))}
+            </div>
+          </section>
 
-            <section className="order-2 lg:order-3 flex h-full flex-col rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
-              <div className="mb-4 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-                    comandas ativas
-                  </p>
-                  <p className="mt-1 text-sm text-[var(--muted)]">
-                    prioridade visual para o que impacta caixa e operacao
-                  </p>
-                </div>
-                <button className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-semibold text-[var(--text)]">
-                  Filtrar estabelecimento
-                </button>
-              </div>
+          <section className="order-2 lg:order-3 flex h-full flex-col rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
+            <SectionHeader intro={ownerDashboardCommandsIntro} withAction />
 
-              <div className="grid gap-3">
-                {ownerCommands.map((command) => (
-                  <CommandCard key={command.code} command={command} />
-                ))}
-              </div>
-            </section>
+            <div className="grid gap-3">
+              {ownerCommands.map((command) => (
+                <CommandCard key={command.code} command={command} />
+              ))}
+            </div>
+          </section>
 
-            <section className="order-3 lg:order-2 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
-              <div className="mb-4 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-                    gerenciamento de mesas
-                  </p>
-                  <p className="mt-1 text-sm text-[var(--muted)]">
-                    grade simples no celular e leitura ampliada no desktop
-                  </p>
-                </div>
-                <span className="w-fit rounded-full bg-white/6 px-3 py-1 text-xs text-[var(--muted)]">
-                  20 mesas
-                </span>
-              </div>
+          <section className="order-3 lg:order-2 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
+            <SectionHeader intro={ownerDashboardTablesIntro} />
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {ownerTables
-                  .filter((table) => table.status !== "Bloqueada")
-                  .map((table) => (
-                  <TableCard key={table.number} table={table} />
-                ))}
-              </div>
-            </section>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {availableTables.map((table) => (
+                <TableCard key={table.number} table={table} />
+              ))}
+            </div>
+          </section>
 
-            <section className="order-4 lg:order-4 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
-              <div className="mb-4 px-2">
-                <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
-                  proximas areas
-                </p>
-                <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
-                  Depois desta tela, as proximas rotas mais naturais sao
-                  `mesas` e `controle de comandas` em detalhe. O layout ja esta
-                  preparado para reaproveitar cards, métricas e status.
-                </p>
-              </div>
+          <section className="order-4 lg:order-4 flex h-full flex-col justify-between rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.96),rgba(10,13,20,0.98))] p-4 shadow-[0_35px_90px_rgba(0,0,0,0.48)]">
+            <div className="mb-4 px-2">
+              <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
+                {ownerDashboardRoadmapIntro.eyebrow}
+              </p>
+              <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
+                {ownerDashboardRoadmapIntro.description}
+              </p>
+            </div>
 
-              <div className="grid gap-3">
-                <RoadmapRow
-                  step="01"
-                  title="Tela de mesas em detalhe"
-                  text="Mapa visual por numero, status e pedidos pendentes."
-                />
-                <RoadmapRow
-                  step="02"
-                  title="Tela de comanda detalhada"
-                  text="Itens, total, acao de marcar como paga e historico."
-                />
-                <RoadmapRow
-                  step="03"
-                  title="Login do proprietario"
-                  text="Separar visualmente criar conta de entrar."
-                />
-              </div>
-            </section>
+            <div className="grid gap-3">
+              {ownerDashboardRoadmap.map((item) => (
+                <RoadmapRow key={item.step} item={item} />
+              ))}
+            </div>
+          </section>
         </section>
       </div>
     </main>
+  );
+}
+
+function SectionHeader({
+  intro,
+  withAction = false,
+}: {
+  intro: DashboardSectionIntro;
+  withAction?: boolean;
+}) {
+  return (
+    <div className="mb-4 flex flex-col gap-3 px-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div>
+        <p className="text-xs uppercase tracking-[0.28em] text-[var(--gold)]">
+          {intro.eyebrow}
+        </p>
+        {intro.title ? (
+          <h2 className="mt-2 font-display text-3xl sm:text-4xl">
+            {intro.title}
+          </h2>
+        ) : null}
+        <p className="mt-1 text-sm text-[var(--muted)]">
+          {intro.description}
+        </p>
+      </div>
+
+      {withAction && intro.actionLabel ? (
+        <button className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-semibold text-[var(--text)]">
+          {intro.actionLabel}
+        </button>
+      ) : null}
+
+      {!withAction && intro.badge ? (
+        <div className="w-fit rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-[var(--muted)]">
+          {intro.badge}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -245,23 +241,15 @@ function TableCard({ table }: { table: OwnerTable }) {
   );
 }
 
-function RoadmapRow({
-  step,
-  title,
-  text,
-}: {
-  step: string;
-  title: string;
-  text: string;
-}) {
+function RoadmapRow({ item }: { item: DashboardRoadmapItem }) {
   return (
     <div className="grid grid-cols-[auto_1fr] gap-4 rounded-[24px] border border-white/8 bg-white/4 p-4">
       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--gold)] font-display text-lg text-[#2f2100]">
-        {step}
+        {item.step}
       </span>
       <div>
-        <p className="font-display text-xl">{title}</p>
-        <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{text}</p>
+        <p className="font-display text-xl">{item.title}</p>
+        <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{item.text}</p>
       </div>
     </div>
   );

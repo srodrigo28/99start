@@ -2,10 +2,11 @@ import Link from "next/link";
 import {
   ownerTableAlerts,
   ownerTables,
-  type OwnerTable,
-  type TableAlert,
-  type TableStatus,
-} from "@/data/owner";
+  
+  
+  
+ } from "@/data/owner-data";
+import type { OwnerTable, TableAlert, TableStatus } from "@/types/owner";
 
 export default function OwnerTablesPage() {
   return (
@@ -173,3 +174,4 @@ function LegendItem({
     </div>
   );
 }
+

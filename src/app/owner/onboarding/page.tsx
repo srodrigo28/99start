@@ -5,9 +5,10 @@ import { useMemo, useState } from "react";
 import {
   onboardingMenuDrafts,
   onboardingStages,
-  type MenuDraft,
-  type OnboardingStage,
-} from "@/data/owner";
+  
+  
+ } from "@/data/owner-data";
+import type { MenuDraft, OnboardingStage } from "@/types/owner";
 
 type SetupStep = "basic" | "media" | "menu" | "experience";
 
@@ -982,3 +983,4 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+

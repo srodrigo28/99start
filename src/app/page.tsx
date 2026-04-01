@@ -2,9 +2,10 @@ import Link from "next/link";
 import {
   ownerBenefits,
   ownerStartSteps,
-  type OwnerBenefit,
-  type OwnerStep,
-} from "@/data/owner";
+  
+  
+ } from "@/data/owner-data";
+import type { OwnerBenefit, OwnerStep } from "@/types/owner";
 
 export default function Home() {
   return (
@@ -152,3 +153,4 @@ function AccessRow({
     </Link>
   );
 }
+
