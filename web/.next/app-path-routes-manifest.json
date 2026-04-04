@@ -1,0 +1,17 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/admin/page": "/admin",
+  "/apple-icon/route": "/apple-icon",
+  "/icon/route": "/icon",
+  "/manifest.webmanifest/route": "/manifest.webmanifest",
+  "/owner/dashboard/page": "/owner/dashboard",
+  "/owner/login/page": "/owner/login",
+  "/owner/onboarding/page": "/owner/onboarding",
+  "/owner/register/page": "/owner/register",
+  "/owner/settings/page": "/owner/settings",
+  "/owner/tables/page": "/owner/tables",
+  "/owner/tabs/page": "/owner/tabs",
+  "/page": "/",
+  "/receipt/[code]/page": "/receipt/[code]"
+}

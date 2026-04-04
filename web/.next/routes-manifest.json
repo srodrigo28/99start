@@ -1,0 +1,137 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/receipt/[code]",
+      "regex": "^/receipt/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPcode": "nxtPcode"
+      },
+      "namedRegex": "^/receipt/(?<nxtPcode>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/apple-icon",
+      "regex": "^/apple\\-icon(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/apple\\-icon(?:/)?$"
+    },
+    {
+      "page": "/icon",
+      "regex": "^/icon(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/icon(?:/)?$"
+    },
+    {
+      "page": "/manifest.webmanifest",
+      "regex": "^/manifest\\.webmanifest(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/manifest\\.webmanifest(?:/)?$"
+    },
+    {
+      "page": "/owner/dashboard",
+      "regex": "^/owner/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/owner/dashboard(?:/)?$"
+    },
+    {
+      "page": "/owner/login",
+      "regex": "^/owner/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/owner/login(?:/)?$"
+    },
+    {
+      "page": "/owner/onboarding",
+      "regex": "^/owner/onboarding(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/owner/onboarding(?:/)?$"
+    },
+    {
+      "page": "/owner/register",
+      "regex": "^/owner/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/owner/register(?:/)?$"
+    },
+    {
+      "page": "/owner/settings",
+      "regex": "^/owner/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/owner/settings(?:/)?$"
+    },
+    {
+      "page": "/owner/tables",
+      "regex": "^/owner/tables(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/owner/tables(?:/)?$"
+    },
+    {
+      "page": "/owner/tabs",
+      "regex": "^/owner/tabs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/owner/tabs(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

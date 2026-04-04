@@ -1,0 +1,10 @@
+{
+  "/apple-icon/route": "app/apple-icon/route.js",
+  "/icon/route": "app/icon/route.js",
+  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
+  "/owner/dashboard/page": "app/owner/dashboard/page.js",
+  "/owner/login/page": "app/owner/login/page.js",
+  "/owner/settings/page": "app/owner/settings/page.js",
+  "/owner/tables/page": "app/owner/tables/page.js",
+  "/owner/tabs/page": "app/owner/tabs/page.js"
+}

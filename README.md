@@ -22,7 +22,13 @@ Confira algumas telas do painel gerencial:
 
 | 📋 Controle de Comandas | 📊 Painel Principal (Resumo de Caixa) | 🍽️ Vitrine / Onboarding |
 |:---:|:---:|:---:|
-| <img src="./preview/controle-comanda.png" alt="Controle de Comanda" width="300" /> | <img src="./preview/painel-01.png" alt="Painel Operacional" width="300" /> | <img src="./preview/vitrine.png" alt="Vitrine do Cardápio" width="300" /> |
+| <img src="./mobile/preview/01-cta/1-cta.png" alt="Controle de Comanda" width="300" /> |
+| <img src="./mobile/preview/01-cta/2-cta.png" alt="Controle de Comanda" width="300" /> |
+| <img src="./mobile/preview/01-cta/3-login.png" alt="Controle de Comanda" width="300" /> |
+
+| <img src="./mobile/preview/02-cadastro/1-cadastro.png" alt="Controle de Comanda" width="300" /> |
+| <img src="./mobile/preview/02-cadastro/cadastro-2.png" alt="Controle de Comanda" width="300" /> |
+| <img src="./mobile/preview/02-cadastro/cadastro-3.png" alt="Controle de Comanda" width="300" /> |
 
 ---
 

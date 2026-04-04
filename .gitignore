@@ -4,8 +4,8 @@
 /node_modules
 .pytest_cache
 __pycache__
-.venv
-venv
+.venv99
+venv99
 /.pnp
 .pnp.*
 .yarn/*
@@ -33,13 +33,15 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+venv
+node_modules
 
-# env files (can opt-in for committing if needed)
-.env*
+# env99 files (can opt-in for committing if needed)
+.env99*
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+next-env99.d.ts
