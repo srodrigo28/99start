@@ -5,8 +5,18 @@
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
 Um projeto moderno e premium focado em otimizar e gerenciar o atendimento, mesas e comandas de estabelecimentos comerciais, desenvolvido com uma arquitetura responsiva e focado no usuário (Mobile-First).
-
 ---
+## dados para acesso conta nova
+
+> * e-mail
+```
+carlos@gmail.com
+```
+
+> * senha
+```
+2020Admin@.
+```
 
 ## 🛠️ Tecnologias Utilizadas
 

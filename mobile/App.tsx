@@ -81,6 +81,7 @@ export default function App() {
       ) : null}
       {screen === "dashboard" ? (
         <DashboardScreen
+          establishmentName={authSession?.establishment?.name}
           onBackHome={() => setScreen("start")}
           onOpenConfig={() => setScreen("config")}
           onOpenCommandas={() => setScreen("comandas")}

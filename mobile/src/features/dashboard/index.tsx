@@ -13,12 +13,14 @@ import { useResponsive } from "../../shared/hooks";
 import { ActionCard, MetricCard, ShortcutCard } from "./components";
 
 type DashboardScreenProps = {
+  establishmentName?: string;
   onBackHome: () => void;
   onOpenConfig: () => void;
   onOpenCommandas: () => void;
 };
 
 export function DashboardScreen({
+  establishmentName,
   onBackHome,
   onOpenConfig,
   onOpenCommandas,
@@ -37,7 +39,9 @@ export function DashboardScreen({
             >
               99Start
             </Text>
-            <Text className="mt-2 text-base font-semibold text-white">Saraiva Bar ativo</Text>
+            <Text className="mt-2 text-base font-semibold text-white">
+              {establishmentName?.trim() || "Nova loja ativa"}
+            </Text>
           </View>
           <Pressable
             onPress={onBackHome}
@@ -58,32 +62,32 @@ export function DashboardScreen({
             className="font-bold text-white"
             style={{ fontSize: heroTitleSize, lineHeight: heroTitleLineHeight }}
           >
-            Visao do dia em um unico painel.
+            Sua operacao comeca por aqui.
           </Text>
 
           <View className="gap-3">
-            <MetricCard eyebrow="Receita hoje" value="R$ 611" detail="8 comandas somadas no dia" tone="green" />
-            <MetricCard eyebrow="Comandas abertas" value="8" detail="3 aguardando fechamento" tone="amber" />
-            <MetricCard eyebrow="Mesas ocupadas" value="12/20" detail="4 livres neste momento" tone="blue" />
-            <MetricCard eyebrow="Mensagens" value="1" detail="Cliente aguardando retorno" tone="pink" />
+            <MetricCard eyebrow="Receita hoje" value="R$ 0,00" detail="Nenhuma venda registrada ainda." tone="green" />
+            <MetricCard eyebrow="Comandas abertas" value="0" detail="Sua fila de comandas ainda esta vazia." tone="amber" />
+            <MetricCard eyebrow="Mesas ocupadas" value="0" detail="Nenhuma mesa ocupada neste momento." tone="blue" />
+            <MetricCard eyebrow="Mensagens" value="0" detail="Sem alertas ou mensagens pendentes." tone="pink" />
           </View>
 
           <View className="gap-3">
             <ActionCard
               title="Configuracoes da loja"
-              description="Atualizar dados, recebimentos, endereco e identidade"
+              description="Complete os dados da loja, recebimentos, endereco e identidade visual."
               colors="bg-[#ff6f67]"
               onPress={onOpenConfig}
             />
             <ActionCard
               title="Controle de comandas"
-              description="Ver comandas ativas, fechamentos e pendencias"
+              description="Quando a operacao comecar, acompanhe aqui comandas, fechamentos e pendencias."
               colors="bg-[#2fbde7]"
               onPress={onOpenCommandas}
             />
             <ActionCard
               title="Gerenciar mesas"
-              description="Acompanhar status, capacidade e ocupacao"
+              description="Prepare o mapa de mesas para iniciar o atendimento da loja."
               colors="bg-[#36dcb6]"
             />
             <ActionCard
@@ -100,25 +104,25 @@ export function DashboardScreen({
         <View className="gap-5" style={{ padding: sectionPadding }}>
           <SectionLabel
             eyebrow="Atalhos principais"
-            subtitle="Use o dashboard como resumo e entre nas rotas especificas para operar com mais foco."
+            subtitle="Sua conta foi criada. Agora o ideal e configurar a operacao antes de receber os primeiros pedidos."
           />
           <Text className="text-[24px] font-bold leading-9 text-white">
-            Acesse cada area no detalhe.
+            Comece preparando sua loja.
           </Text>
           <View className="gap-3">
             <ShortcutCard
               icon={<StoreIcon />}
-              title="Comandas ativas"
-              description="Abra a rota completa para ver itens, totais, historico e acoes de pagamento."
-              badge="8 comandas"
-              cta="Abrir comandas"
-              onPress={onOpenCommandas}
+              title="Primeiros passos"
+              description="Revise os dados basicos da sua loja antes de iniciar atendimento e pagamentos."
+              badge="onboarding"
+              cta="Abrir configuracoes"
+              onPress={onOpenConfig}
             />
             <ShortcutCard
               icon={<PlateIcon />}
               title="Mesas"
-              description="Entre na visao dedicada para acompanhar status, ocupacao, pedidos e detalhes por mesa."
-              badge="20 mesas"
+              description="Quando essa area estiver conectada aos dados reais, voce acompanhara ocupacao, pedidos e status por mesa."
+              badge="0 mesas"
               cta="Abrir mesas"
             />
             <ShortcutCard

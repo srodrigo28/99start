@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent
 VENV_DIR = BASE_DIR / ".venv"
 REQUIREMENTS_FILE = BASE_DIR / "requirements" / "dev.txt"
 RUN_FILE = BASE_DIR / "run.py"
+ALEMBIC_INI_FILE = BASE_DIR / "migrations" / "alembic.ini"
 
 
 @dataclass
@@ -283,12 +284,33 @@ def check_database_connection() -> list[str]:
     ]
 
 
+def run_database_migrations() -> list[str]:
+    if not ALEMBIC_INI_FILE.exists():
+        raise FileNotFoundError(f"Arquivo de migracao nao encontrado: {ALEMBIC_INI_FILE}")
+
+    env = os.environ.copy()
+    env["FLASK_APP"] = "run.py"
+
+    subprocess.run(
+        [sys.executable, "-m", "flask", "db", "upgrade"],
+        check=True,
+        cwd=BASE_DIR,
+        env=env,
+    )
+
+    return [
+        "Migracoes aplicadas com sucesso.",
+        "Comando executado: python -m flask db upgrade",
+        f"Arquivo de app usado: {RUN_FILE.name}",
+    ]
+
+
 def start_api() -> int:
     if not RUN_FILE.exists():
         raise FileNotFoundError(f"Arquivo principal da API nao encontrado: {RUN_FILE}")
 
     print_line()
-    print_line("[PASSO 5] Iniciar API")
+    print_line("[PASSO 6] Iniciar API")
     print_info(f"Arquivo principal: {RUN_FILE}")
     print_info("A API sera iniciada agora.")
     return subprocess.run([sys.executable, str(RUN_FILE)], cwd=BASE_DIR).returncode
@@ -307,6 +329,7 @@ def main() -> int:
 
         run_step(3, "Instalar ou atualizar dependencias", install_dependencies)
         run_step(4, "Validar conexao com o banco", check_database_connection)
+        run_step(5, "Aplicar migracoes do banco", run_database_migrations)
         print_summary()
         return start_api()
     except Exception:
