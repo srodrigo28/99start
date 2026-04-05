@@ -21,6 +21,9 @@ def test_register_owner_rejects_duplicate_email(app) -> None:
             'establishment_name': 'Espeto do Jose',
             'cnpj': '12.345.678/0001-90',
             'phone': '(62) 98888-0000',
+            'address': 'Rua A, 1',
+            'neighborhood': 'Centro',
+            'city': 'Goiania',
         }
 
         service.register_owner(payload)
@@ -43,6 +46,9 @@ def test_login_accepts_valid_password(app) -> None:
                 'phone': '(62) 98888-0000',
                 'owner_name': 'Claudio',
                 'email': 'claudio@example.com',
+                'address': 'Rua B, 2',
+                'neighborhood': 'Setor Sul',
+                'city': 'Goiania',
             }
         )
         auth_repository.create_user(
@@ -84,6 +90,9 @@ def test_logout_revokes_access_and_refresh_tokens(app) -> None:
                 'establishment_name': 'Cafe da Lia',
                 'cnpj': '19.345.678/0001-90',
                 'phone': '(62) 99999-2222',
+                'address': 'Rua C, 3',
+                'neighborhood': 'Campinas',
+                'city': 'Goiania',
             }
         )
 

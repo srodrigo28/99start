@@ -8,6 +8,9 @@ def test_register_returns_created_for_valid_payload(client) -> None:
             'establishment_name': 'Bar da Maria',
             'cnpj': '12.345.678/0001-90',
             'phone': '(62) 99999-1234',
+            'address': 'Rua das Flores, 10',
+            'neighborhood': 'Centro',
+            'city': 'Goiania',
         },
     )
 
@@ -16,6 +19,7 @@ def test_register_returns_created_for_valid_payload(client) -> None:
     assert response.status_code == 201
     assert body['success'] is True
     assert body['data']['user']['email'] == 'maria@example.com'
+    assert body['data']['establishment']['city'] == 'Goiania'
     assert body['data']['access_token']
     assert body['data']['refresh_token']
 

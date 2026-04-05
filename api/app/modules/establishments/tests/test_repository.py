@@ -11,6 +11,9 @@ def test_list_all_returns_existing_establishments(app) -> None:
                 'phone': '(62) 96666-0000',
                 'owner_name': 'Fernanda',
                 'email': 'fernanda@example.com',
+                'address': 'Rua G, 7',
+                'neighborhood': 'Centro',
+                'city': 'Goiania',
             }
         )
 
@@ -18,3 +21,4 @@ def test_list_all_returns_existing_establishments(app) -> None:
 
         assert len(items) >= 1
         assert items[0].name
+        assert items[0].city == 'Goiania'

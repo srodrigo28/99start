@@ -15,6 +15,9 @@ class EstablishmentRepository:
             phone=str(payload.get('phone', '')).strip(),
             owner_name=str(payload['owner_name']).strip(),
             email=str(payload['email']).strip().lower(),
+            address=str(payload['address']).strip(),
+            neighborhood=str(payload['neighborhood']).strip(),
+            city=str(payload['city']).strip(),
             status='pending',
         )
         db.session.add(establishment)

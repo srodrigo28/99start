@@ -38,6 +38,9 @@ class AuthService:
                 'phone': payload.get('phone', ''),
                 'owner_name': payload['owner_name'],
                 'email': email,
+                'address': payload['address'],
+                'neighborhood': payload['neighborhood'],
+                'city': payload['city'],
             }
         )
         user = self.repository.create_user(

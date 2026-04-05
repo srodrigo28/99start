@@ -14,6 +14,9 @@ class Establishment(db.Model):
     phone = db.Column(db.String(30), nullable=False, default='')
     owner_name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(160), nullable=False)
+    address = db.Column(db.String(255), nullable=False, default='')
+    neighborhood = db.Column(db.String(120), nullable=False, default='')
+    city = db.Column(db.String(120), nullable=False, default='')
     status = db.Column(db.String(40), nullable=False, default='pending')
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
@@ -27,5 +30,8 @@ class Establishment(db.Model):
             'phone': self.phone,
             'owner_name': self.owner_name,
             'email': self.email,
+            'address': self.address,
+            'neighborhood': self.neighborhood,
+            'city': self.city,
             'status': self.status,
         }

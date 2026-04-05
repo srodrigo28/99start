@@ -14,10 +14,14 @@ def test_create_establishment_returns_pending_status(app) -> None:
                 'phone': '(62) 98888-0000',
                 'owner_name': 'Claudio',
                 'email': 'claudio@example.com',
+                'address': 'Rua F, 6',
+                'neighborhood': 'Centro',
+                'city': 'Goiania',
             }
         )
 
         assert establishment['status'] == 'pending'
+        assert establishment['city'] == 'Goiania'
 
 
 def test_create_establishment_rejects_duplicate_cnpj(app) -> None:
@@ -30,6 +34,9 @@ def test_create_establishment_rejects_duplicate_cnpj(app) -> None:
             'phone': '(62) 98888-0000',
             'owner_name': 'Claudio',
             'email': 'claudio@example.com',
+            'address': 'Rua F, 6',
+            'neighborhood': 'Centro',
+            'city': 'Goiania',
         }
 
         service.create_establishment(payload)

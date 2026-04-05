@@ -8,6 +8,10 @@ def validate_register_payload(payload: dict[str, object]) -> list[str]:
         'password',
         'establishment_name',
         'cnpj',
+        'phone',
+        'address',
+        'neighborhood',
+        'city',
     ]
     missing: list[str] = []
     for field in required_fields:

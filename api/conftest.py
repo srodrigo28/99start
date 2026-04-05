@@ -37,6 +37,9 @@ def persisted_establishment(app):
             phone='(62) 99999-0000',
             owner_name='Heitor',
             email='contato@saraiiva.com',
+            address='Rua Principal, 100',
+            neighborhood='Centro',
+            city='Goiania',
             status='pending',
         )
         db.session.add(establishment)

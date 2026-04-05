@@ -12,6 +12,9 @@ def test_find_by_email_returns_saved_user(app) -> None:
                 'phone': '(62) 97777-0000',
                 'owner_name': 'Paula',
                 'email': 'paula@example.com',
+                'address': 'Rua D, 4',
+                'neighborhood': 'Centro',
+                'city': 'Goiania',
             }
         )
         repository = AuthRepository()
