@@ -26,3 +26,7 @@ class EstablishmentRepository:
 
     def find_by_cnpj(self, cnpj: str) -> Establishment | None:
         return Establishment.query.filter_by(cnpj=cnpj.strip()).first()
+
+    def find_by_name(self, name: str) -> Establishment | None:
+        normalized_name = name.strip()
+        return Establishment.query.filter(Establishment.name.ilike(normalized_name)).first()

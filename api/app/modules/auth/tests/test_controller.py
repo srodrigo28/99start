@@ -66,3 +66,34 @@ def test_register_returns_conflict_for_duplicate_cnpj(client) -> None:
     assert second_response.status_code == 409
     assert body['success'] is False
     assert body['message'] == 'Ja existe um estabelecimento com este CNPJ.'
+
+
+def test_register_returns_conflict_for_duplicate_establishment_name(client) -> None:
+    payload = {
+        'owner_name': 'Maria Souza',
+        'email': 'maria@example.com',
+        'password': 'Senha@123',
+        'establishment_name': 'Bar da Maria',
+        'cnpj': '12.345.678/0001-90',
+        'phone': '(62) 99999-1234',
+        'address': 'Rua das Flores, 10',
+        'neighborhood': 'Centro',
+        'city': 'Goiania',
+    }
+
+    first_response = client.post('/api/v1/auth/register', json=payload)
+    second_response = client.post(
+        '/api/v1/auth/register',
+        json={
+            **payload,
+            'email': 'nome-repetido@example.com',
+            'cnpj': '98.765.432/0001-10',
+        },
+    )
+
+    body = second_response.get_json()
+
+    assert first_response.status_code == 201
+    assert second_response.status_code == 409
+    assert body['success'] is False
+    assert body['message'] == 'Ja existe um estabelecimento com este nome.'

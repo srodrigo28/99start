@@ -1,6 +1,13 @@
 import { useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import Animated, {
+  FadeInLeft,
+  FadeInRight,
+  FadeOutLeft,
+  FadeOutRight,
+  LinearTransition,
+} from "react-native-reanimated";
 
 import {
   FormAlert,
@@ -199,6 +206,21 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
     });
   };
 
+  const renderStepContainer = (step: StepId, children: React.ReactNode) => {
+    const isForwardMotion = step >= currentStep;
+
+    return (
+      <Animated.View
+        key={`cadastro-step-${step}`}
+        entering={isForwardMotion ? FadeInRight.duration(240) : FadeInLeft.duration(240)}
+        exiting={isForwardMotion ? FadeOutLeft.duration(180) : FadeOutRight.duration(180)}
+        layout={LinearTransition.duration(220)}
+      >
+        {children}
+      </Animated.View>
+    );
+  };
+
   const buildRegisterPayload = () => ({
     owner_name: form.ownerName.trim(),
     email: form.email.trim().toLowerCase(),
@@ -311,6 +333,7 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
     } catch (error) {
       if (error instanceof ApiRequestError) {
         const apiFieldErrors: Partial<Record<keyof FormState, string>> = {};
+        const normalizedMessage = error.message.toLowerCase();
 
         if (error.errors.includes("owner_name")) apiFieldErrors.ownerName = "Informe o nome do responsavel.";
         if (error.errors.includes("email")) apiFieldErrors.email = "Informe um e-mail valido.";
@@ -321,6 +344,15 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
         if (error.errors.includes("address")) apiFieldErrors.address = "Informe o endereco.";
         if (error.errors.includes("neighborhood")) apiFieldErrors.neighborhood = "Informe o bairro.";
         if (error.errors.includes("city")) apiFieldErrors.city = "Informe a cidade.";
+        if (normalizedMessage.includes("este nome")) {
+          apiFieldErrors.businessName = "Ja existe um estabelecimento com este nome.";
+        }
+        if (normalizedMessage.includes("este cnpj")) {
+          apiFieldErrors.cnpj = "Ja existe um estabelecimento com este CNPJ.";
+        }
+        if (normalizedMessage.includes("este e-mail")) {
+          apiFieldErrors.email = "Ja existe um usuario com este e-mail.";
+        }
 
         setErrors((previous) => ({ ...previous, ...apiFieldErrors }));
         setAlert({
@@ -390,303 +422,312 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
       </GlassPanel>
 
       {currentStep === 1 ? (
-        <FormCard
-          icon={<StoreIcon size={28} />}
-          title="Dados do local"
-          subtitle="Preencha os dados principais."
-        >
-          <View className="gap-4">
-            {alert ? (
-              <FormAlert
-                title={alert.title}
-                message={alert.message}
-                variant={alert.variant}
-                onClose={() => setAlert(undefined)}
+        renderStepContainer(
+          1,
+          <FormCard
+            icon={<StoreIcon size={28} />}
+            title="Dados do local"
+            subtitle="Preencha os dados principais."
+          >
+            <View className="gap-4">
+              {alert ? (
+                <FormAlert
+                  title={alert.title}
+                  message={alert.message}
+                  variant={alert.variant}
+                  onClose={() => setAlert(undefined)}
+                />
+              ) : null}
+              <TextField
+                label="Nome do estabelecimento"
+                placeholder="Ex: Restaurante Sabor da Casa"
+                help="Digite o nome comercial que sera exibido para seus clientes."
+                value={form.businessName}
+                onChangeText={(value) => {
+                  updateField("businessName", trimMultilineSpaces(value));
+                  clearFieldError("businessName");
+                }}
+                error={errors.businessName}
               />
-            ) : null}
-            <TextField
-              label="Nome do estabelecimento"
-              placeholder="Ex: Restaurante Sabor da Casa"
-              help="Digite o nome comercial que sera exibido para seus clientes."
-              value={form.businessName}
-              onChangeText={(value) => {
-                updateField("businessName", trimMultilineSpaces(value));
-                clearFieldError("businessName");
-              }}
-              error={errors.businessName}
-            />
-            <TextField
-              label="CNPJ"
-              placeholder="00.000.000/0000-00"
-              help="Informe o CNPJ do estabelecimento com 14 numeros."
-              value={form.cnpj}
-              onChangeText={(value) => {
-                updateField("cnpj", formatCnpj(value));
-                clearFieldError("cnpj");
-              }}
-              error={errors.cnpj}
-              keyboardType="number-pad"
-            />
-            <TextField
-              label="Nome do responsavel"
-              placeholder="Ex: Mateus Vinicius"
-              value={form.ownerName}
-              onChangeText={(value) => {
-                updateField("ownerName", trimMultilineSpaces(value));
-                clearFieldError("ownerName");
-              }}
-              error={errors.ownerName}
-            />
-            <TextField
-              label="E-mail"
-              placeholder="voce@empresa.com"
-              value={form.email}
-              onChangeText={(value) => {
-                updateField("email", value.trim());
-                clearFieldError("email");
-              }}
-              error={errors.email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <TextField
-              label="Telefone"
-              placeholder="(00) 00000-0000"
-              help="Use DDD e o principal numero de contato."
-              value={form.phone}
-              onChangeText={(value) => {
-                updateField("phone", formatPhone(value));
-                clearFieldError("phone");
-              }}
-              error={errors.phone}
-              keyboardType="phone-pad"
-            />
-            <View className="gap-3 pt-2">
-              <GradientButton label="Voltar" variant="secondary" onPress={onBackHome} disabled={isSubmitting} />
-              <LinearGradient
-                colors={["#4476ff", "#28c8e8"]}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={{ borderRadius: 18 }}
-              >
-                <Pressable onPress={nextStep} className="px-5 py-4" disabled={isSubmitting}>
-                  <Text className="text-center text-base font-semibold text-white">
-                    Proximo
-                  </Text>
-                </Pressable>
-              </LinearGradient>
-              <Text className="text-center text-sm text-[#d7e3f6]">
-                Ja tem conta? <Text className="font-semibold">Entrar agora</Text>
-              </Text>
+              <TextField
+                label="CNPJ"
+                placeholder="00.000.000/0000-00"
+                help="Informe o CNPJ do estabelecimento com 14 numeros."
+                value={form.cnpj}
+                onChangeText={(value) => {
+                  updateField("cnpj", formatCnpj(value));
+                  clearFieldError("cnpj");
+                }}
+                error={errors.cnpj}
+                keyboardType="number-pad"
+              />
+              <TextField
+                label="Nome do responsavel"
+                placeholder="Ex: Mateus Vinicius"
+                value={form.ownerName}
+                onChangeText={(value) => {
+                  updateField("ownerName", trimMultilineSpaces(value));
+                  clearFieldError("ownerName");
+                }}
+                error={errors.ownerName}
+              />
+              <TextField
+                label="E-mail"
+                placeholder="voce@empresa.com"
+                value={form.email}
+                onChangeText={(value) => {
+                  updateField("email", value.trim());
+                  clearFieldError("email");
+                }}
+                error={errors.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <TextField
+                label="Telefone"
+                placeholder="(00) 00000-0000"
+                help="Use DDD e o principal numero de contato."
+                value={form.phone}
+                onChangeText={(value) => {
+                  updateField("phone", formatPhone(value));
+                  clearFieldError("phone");
+                }}
+                error={errors.phone}
+                keyboardType="phone-pad"
+              />
+              <View className="gap-3 pt-2">
+                <GradientButton label="Voltar" variant="secondary" onPress={onBackHome} disabled={isSubmitting} />
+                <LinearGradient
+                  colors={["#4476ff", "#28c8e8"]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={{ borderRadius: 18 }}
+                >
+                  <Pressable onPress={nextStep} className="px-5 py-4" disabled={isSubmitting}>
+                    <Text className="text-center text-base font-semibold text-white">
+                      Proximo
+                    </Text>
+                  </Pressable>
+                </LinearGradient>
+                <Text className="text-center text-sm text-[#d7e3f6]">
+                  Ja tem conta? <Text className="font-semibold">Entrar agora</Text>
+                </Text>
+              </View>
             </View>
-          </View>
-        </FormCard>
+          </FormCard>,
+        )
       ) : null}
 
       {currentStep === 2 ? (
-        <FormCard
-          icon={<PinIcon size={28} />}
-          title="Endereco do estabelecimento"
-          subtitle="Defina a localizacao de atendimento."
-        >
-          <View className="gap-4">
-            {alert ? (
-              <FormAlert
-                title={alert.title}
-                message={alert.message}
-                variant={alert.variant}
-                onClose={() => setAlert(undefined)}
+        renderStepContainer(
+          2,
+          <FormCard
+            icon={<PinIcon size={28} />}
+            title="Endereco do estabelecimento"
+            subtitle="Defina a localizacao de atendimento."
+          >
+            <View className="gap-4">
+              {alert ? (
+                <FormAlert
+                  title={alert.title}
+                  message={alert.message}
+                  variant={alert.variant}
+                  onClose={() => setAlert(undefined)}
+                />
+              ) : null}
+              <TextField
+                label="CEP"
+                placeholder="00000-000"
+                help={
+                  isLookingUpCep
+                    ? "Consultando o CEP informado..."
+                    : "Digite o CEP para preencher endereco, bairro e cidade automaticamente."
+                }
+                value={form.cep}
+                onChangeText={(value) => {
+                  const formatted = formatCep(value);
+                  updateField("cep", formatted);
+                  clearFieldError("cep");
+
+                  if (formatted.length < 9) {
+                    setForm((previous) => ({
+                      ...previous,
+                      cep: formatted,
+                      address: "",
+                      neighborhood: "",
+                      city: "",
+                    }));
+                  }
+
+                  if (formatted.length === 9) {
+                    void handleCepLookup(formatted);
+                  }
+                }}
+                error={errors.cep}
+                keyboardType="number-pad"
               />
-            ) : null}
-            <TextField
-              label="CEP"
-              placeholder="00000-000"
-              help={
-                isLookingUpCep
-                  ? "Consultando o CEP informado..."
-                  : "Digite o CEP para preencher endereco, bairro e cidade automaticamente."
-              }
-              value={form.cep}
-              onChangeText={(value) => {
-                const formatted = formatCep(value);
-                updateField("cep", formatted);
-                clearFieldError("cep");
-
-                if (formatted.length < 9) {
-                  setForm((previous) => ({
-                    ...previous,
-                    cep: formatted,
-                    address: "",
-                    neighborhood: "",
-                    city: "",
-                  }));
-                }
-
-                if (formatted.length === 9) {
-                  void handleCepLookup(formatted);
-                }
-              }}
-              error={errors.cep}
-              keyboardType="number-pad"
-            />
-            <TextField
-              label="Endereco"
-              placeholder="Endereco preenchido pelo CEP"
-              help="Campo preenchido automaticamente a partir do CEP."
-              value={form.address}
-              onChangeText={() => undefined}
-              error={errors.address}
-              editable={false}
-            />
-            <TextField
-              label="Complemento"
-              placeholder="Ex: Quadra 18, lote 4, sala 2"
-              help="Digite apenas o complemento necessario para localizar melhor o estabelecimento."
-              value={form.complement}
-              onChangeText={(value) => {
-                updateField("complement", trimMultilineSpaces(value));
-                clearFieldError("complement");
-              }}
-              error={errors.complement}
-            />
-            <TextField
-              label="Bairro"
-              placeholder="Bairro preenchido pelo CEP"
-              value={form.neighborhood}
-              onChangeText={() => undefined}
-              error={errors.neighborhood}
-              editable={false}
-            />
-            <TextField
-              label="Cidade"
-              placeholder="Cidade preenchida pelo CEP"
-              value={form.city}
-              onChangeText={() => undefined}
-              error={errors.city}
-              editable={false}
-            />
-            <View className="gap-3 pt-2">
-              <GradientButton label="Voltar" variant="secondary" onPress={previousStep} disabled={isSubmitting || isLookingUpCep} />
-              <LinearGradient
-                colors={["#4476ff", "#28c8e8"]}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={{ borderRadius: 18 }}
-              >
-                <Pressable onPress={nextStep} className="px-5 py-4" disabled={isSubmitting || isLookingUpCep}>
-                  <Text className="text-center text-base font-semibold text-white">
-                    {isLookingUpCep ? "Buscando CEP..." : "Proximo"}
-                  </Text>
-                </Pressable>
-              </LinearGradient>
+              <TextField
+                label="Endereco"
+                placeholder="Endereco preenchido pelo CEP"
+                help="Campo preenchido automaticamente a partir do CEP."
+                value={form.address}
+                onChangeText={() => undefined}
+                error={errors.address}
+                editable={false}
+              />
+              <TextField
+                label="Complemento"
+                placeholder="Ex: Quadra 18, lote 4, sala 2"
+                help="Digite apenas o complemento necessario para localizar melhor o estabelecimento."
+                value={form.complement}
+                onChangeText={(value) => {
+                  updateField("complement", trimMultilineSpaces(value));
+                  clearFieldError("complement");
+                }}
+                error={errors.complement}
+              />
+              <TextField
+                label="Bairro"
+                placeholder="Bairro preenchido pelo CEP"
+                value={form.neighborhood}
+                onChangeText={() => undefined}
+                error={errors.neighborhood}
+                editable={false}
+              />
+              <TextField
+                label="Cidade"
+                placeholder="Cidade preenchida pelo CEP"
+                value={form.city}
+                onChangeText={() => undefined}
+                error={errors.city}
+                editable={false}
+              />
+              <View className="gap-3 pt-2">
+                <GradientButton label="Voltar" variant="secondary" onPress={previousStep} disabled={isSubmitting || isLookingUpCep} />
+                <LinearGradient
+                  colors={["#4476ff", "#28c8e8"]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={{ borderRadius: 18 }}
+                >
+                  <Pressable onPress={nextStep} className="px-5 py-4" disabled={isSubmitting || isLookingUpCep}>
+                    <Text className="text-center text-base font-semibold text-white">
+                      {isLookingUpCep ? "Buscando CEP..." : "Proximo"}
+                    </Text>
+                  </Pressable>
+                </LinearGradient>
+              </View>
             </View>
-          </View>
-        </FormCard>
+          </FormCard>,
+        )
       ) : null}
 
       {currentStep === 3 ? (
-        <FormCard
-          icon={<LockIcon size={28} />}
-          title="Criar senha"
-          subtitle="Defina uma senha segura."
-        >
-          <View className="gap-4">
-            {alert ? (
-              <FormAlert
-                title={alert.title}
-                message={alert.message}
-                variant={alert.variant}
-                onClose={() => setAlert(undefined)}
+        renderStepContainer(
+          3,
+          <FormCard
+            icon={<LockIcon size={28} />}
+            title="Criar senha"
+            subtitle="Defina uma senha segura."
+          >
+            <View className="gap-4">
+              {alert ? (
+                <FormAlert
+                  title={alert.title}
+                  message={alert.message}
+                  variant={alert.variant}
+                  onClose={() => setAlert(undefined)}
+                />
+              ) : null}
+              <TextField
+                label="Senha"
+                placeholder="••••••••"
+                help="Use letras maiusculas, minusculas, numeros e simbolos."
+                value={form.password}
+                onChangeText={(value) => {
+                  updateField("password", value);
+                  clearFieldError("password");
+                }}
+                secureTextEntry
+                error={errors.password}
+                autoCapitalize="none"
               />
-            ) : null}
-            <TextField
-              label="Senha"
-              placeholder="••••••••"
-              help="Use letras maiusculas, minusculas, numeros e simbolos."
-              value={form.password}
-              onChangeText={(value) => {
-                updateField("password", value);
-                clearFieldError("password");
-              }}
-              secureTextEntry
-              error={errors.password}
-              autoCapitalize="none"
-            />
-            <TextField
-              label="Confirmar senha"
-              placeholder="••••••••"
-              value={form.confirmPassword}
-              onChangeText={(value) => {
-                updateField("confirmPassword", value);
-                clearFieldError("confirmPassword");
-              }}
-              secureTextEntry
-              highlight
-              error={errors.confirmPassword}
-              autoCapitalize="none"
-            />
+              <TextField
+                label="Confirmar senha"
+                placeholder="••••••••"
+                value={form.confirmPassword}
+                onChangeText={(value) => {
+                  updateField("confirmPassword", value);
+                  clearFieldError("confirmPassword");
+                }}
+                secureTextEntry
+                highlight
+                error={errors.confirmPassword}
+                autoCapitalize="none"
+              />
 
-            <GlassPanel>
-              <View className="gap-4 px-4 py-4">
-                <View className="flex-row items-center justify-between">
-                  <View className="gap-1">
-                    <Text
-                      className="font-semibold text-white"
-                      style={{ fontSize: isSmallPhone ? 15 : 16 }}
-                    >
-                      Qualidade da senha
-                    </Text>
-                    <Text className="text-sm leading-5 text-[#b4c3dd]">
-                      {strength >= 4
-                        ? "Otima senha para proteger seu acesso."
-                        : "Use mais caracteres, numeros e simbolos."}
-                    </Text>
+              <GlassPanel>
+                <View className="gap-4 px-4 py-4">
+                  <View className="flex-row items-center justify-between">
+                    <View className="gap-1">
+                      <Text
+                        className="font-semibold text-white"
+                        style={{ fontSize: isSmallPhone ? 15 : 16 }}
+                      >
+                        Qualidade da senha
+                      </Text>
+                      <Text className="text-sm leading-5 text-[#b4c3dd]">
+                        {strength >= 4
+                          ? "Otima senha para proteger seu acesso."
+                          : "Use mais caracteres, numeros e simbolos."}
+                      </Text>
+                    </View>
+                    <View className="rounded-full border border-[#36465d] bg-[#1c2635] px-3 py-1">
+                      <Text className="text-xs font-semibold text-white">
+                        {strengthLabel}
+                      </Text>
+                    </View>
                   </View>
-                  <View className="rounded-full border border-[#36465d] bg-[#1c2635] px-3 py-1">
-                    <Text className="text-xs font-semibold text-white">
-                      {strengthLabel}
-                    </Text>
+
+                  <View className="h-3 rounded-full bg-[#303b4d]">
+                    <View
+                      className="h-3 rounded-full"
+                      style={{
+                        width: `${Math.max(20, strength * 25)}%`,
+                        backgroundColor: strengthColor,
+                      }}
+                    />
+                  </View>
+
+                  <View className="gap-3">
+                    {passwordRules.map((rule) => (
+                      <PasswordRule key={rule.label} label={rule.label} met={rule.met} />
+                    ))}
                   </View>
                 </View>
+              </GlassPanel>
 
-                <View className="h-3 rounded-full bg-[#303b4d]">
-                  <View
-                    className="h-3 rounded-full"
-                    style={{
-                      width: `${Math.max(20, strength * 25)}%`,
-                      backgroundColor: strengthColor,
-                    }}
-                  />
-                </View>
-
-                <View className="gap-3">
-                  {passwordRules.map((rule) => (
-                    <PasswordRule key={rule.label} label={rule.label} met={rule.met} />
-                  ))}
-                </View>
+              <View className="gap-3 pt-2">
+                <GradientButton label="Voltar" variant="secondary" onPress={previousStep} disabled={isSubmitting} />
+                <LinearGradient
+                  colors={["#4476ff", "#28c8e8"]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={{ borderRadius: 18 }}
+                >
+                  <Pressable onPress={finalizeRegistration} className="px-5 py-4" disabled={isSubmitting}>
+                    <Text className="text-center text-base font-semibold text-white">
+                      {isSubmitting ? "Finalizando..." : "Finalizar cadastro"}
+                    </Text>
+                  </Pressable>
+                </LinearGradient>
+                <Text className="text-center text-sm text-[#d7e3f6]">
+                  Ja tem conta? <Text className="font-semibold">Entrar agora</Text>
+                </Text>
               </View>
-            </GlassPanel>
-
-            <View className="gap-3 pt-2">
-              <GradientButton label="Voltar" variant="secondary" onPress={previousStep} disabled={isSubmitting} />
-              <LinearGradient
-                colors={["#4476ff", "#28c8e8"]}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={{ borderRadius: 18 }}
-              >
-                <Pressable onPress={finalizeRegistration} className="px-5 py-4" disabled={isSubmitting}>
-                  <Text className="text-center text-base font-semibold text-white">
-                    {isSubmitting ? "Finalizando..." : "Finalizar cadastro"}
-                  </Text>
-                </Pressable>
-              </LinearGradient>
-              <Text className="text-center text-sm text-[#d7e3f6]">
-                Ja tem conta? <Text className="font-semibold">Entrar agora</Text>
-              </Text>
             </View>
-          </View>
-        </FormCard>
+          </FormCard>,
+        )
       ) : null}
     </ScreenContainer>
   );

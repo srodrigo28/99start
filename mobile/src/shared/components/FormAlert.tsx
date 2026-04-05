@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import Animated, { FadeInDown, FadeOutUp, LinearTransition } from "react-native-reanimated";
 
 type AlertVariant = "error" | "success" | "info";
 
@@ -42,7 +43,10 @@ export function FormAlert({
   const styles = variantStyles[variant];
 
   return (
-    <View
+    <Animated.View
+      entering={FadeInDown.duration(260)}
+      exiting={FadeOutUp.duration(180)}
+      layout={LinearTransition.duration(200)}
       className="mb-4 rounded-[22px] border px-4 py-4"
       style={{ borderColor: styles.border, backgroundColor: styles.bg }}
     >
@@ -67,6 +71,6 @@ export function FormAlert({
           </Pressable>
         ) : null}
       </View>
-    </View>
+    </Animated.View>
   );
 }

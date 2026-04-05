@@ -42,3 +42,38 @@ def test_create_establishment_requires_required_fields(client) -> None:
     assert body['success'] is False
     assert 'cnpj' in body['errors']
     assert 'address' in body['errors']
+
+
+def test_create_establishment_returns_conflict_for_duplicate_name(client) -> None:
+    client.post(
+        '/api/v1/establishments/',
+        json={
+            'name': 'Nome Unico',
+            'cnpj': '10.111.222/0001-33',
+            'phone': '(62) 97777-1111',
+            'owner_name': 'Carlos',
+            'email': 'nome-unico@example.com',
+            'address': 'Rua E, 5',
+            'neighborhood': 'Centro',
+            'city': 'Goiania',
+        },
+    )
+
+    response = client.post(
+        '/api/v1/establishments/',
+        json={
+            'name': 'Nome Unico',
+            'cnpj': '44.555.666/0001-77',
+            'phone': '(62) 96666-1111',
+            'owner_name': 'Marina',
+            'email': 'outro@example.com',
+            'address': 'Rua F, 10',
+            'neighborhood': 'Setor Sul',
+            'city': 'Goiania',
+        },
+    )
+    body = response.get_json()
+
+    assert response.status_code == 409
+    assert body['success'] is False
+    assert body['message'] == 'Ja existe um estabelecimento com este nome.'
