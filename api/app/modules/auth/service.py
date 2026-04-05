@@ -28,13 +28,16 @@ class AuthService:
 
     def register_owner(self, payload: dict[str, object]) -> dict[str, object]:
         email = str(payload['email']).strip().lower()
+        cnpj = str(payload['cnpj']).strip()
         if self.repository.find_by_email(email):
             raise ValueError('Ja existe um usuario com este e-mail.')
+        if self.establishment_repository.find_by_cnpj(cnpj):
+            raise ValueError('Ja existe um estabelecimento com este CNPJ.')
 
         establishment = self.establishment_repository.create(
             {
                 'name': payload['establishment_name'],
-                'cnpj': payload['cnpj'],
+                'cnpj': cnpj,
                 'phone': payload.get('phone', ''),
                 'owner_name': payload['owner_name'],
                 'email': email,

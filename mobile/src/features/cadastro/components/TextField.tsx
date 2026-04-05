@@ -14,6 +14,7 @@ type TextFieldProps = {
   keyboardType?: KeyboardTypeOptions;
   autoCapitalize?: TextInputProps["autoCapitalize"];
   autoCorrect?: boolean;
+  editable?: boolean;
 };
 
 export function TextField({
@@ -28,6 +29,7 @@ export function TextField({
   keyboardType,
   autoCapitalize = "sentences",
   autoCorrect = false,
+  editable = true,
 }: TextFieldProps) {
   const { isSmallPhone, letterSpacingWide } = useResponsive();
   const hasError = Boolean(error);
@@ -51,6 +53,7 @@ export function TextField({
         style={{
           minHeight: isSmallPhone ? 52 : 56,
           fontSize: isSmallPhone ? 15 : 16,
+          opacity: editable ? 1 : 0.75,
         }}
         placeholder={placeholder}
         placeholderTextColor="#64758f"
@@ -60,6 +63,7 @@ export function TextField({
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         autoCorrect={autoCorrect}
+        editable={editable}
       />
       {error ? (
         <Text className="text-xs leading-5 text-[#ff9ab0]">{error}</Text>

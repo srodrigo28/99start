@@ -5,18 +5,20 @@ type GradientButtonProps = {
   label: string;
   onPress?: () => void;
   variant?: "primary" | "secondary";
+  disabled?: boolean;
 };
 
 export function GradientButton({
   label,
   onPress,
   variant = "primary",
+  disabled = false,
 }: GradientButtonProps) {
   if (variant === "secondary") {
     return (
-      <Pressable onPress={onPress}>
+      <Pressable onPress={onPress} disabled={disabled}>
         <View className="rounded-[18px] border border-[#32435e] bg-[#161f2d] px-5 py-4">
-          <Text className="text-center text-base font-semibold text-white">
+          <Text className={`text-center text-base font-semibold ${disabled ? "text-[#8090ab]" : "text-white"}`}>
             {label}
           </Text>
         </View>
@@ -25,9 +27,9 @@ export function GradientButton({
   }
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} disabled={disabled}>
       <LinearGradient
-        colors={["#ff8a38", "#ff5d78"]}
+        colors={disabled ? ["#5f6470", "#444a56"] : ["#ff8a38", "#ff5d78"]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
         style={{ borderRadius: 18 }}

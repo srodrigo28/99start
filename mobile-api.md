@@ -16,22 +16,36 @@
 ### 3.1. Mobile
 - O app Expo esta funcional com navegacao local em `App.tsx`.
 - O fluxo `start -> login -> cadastro -> show -> dashboard` ja existe.
+- A base de integracao agora existe em:
+  - `mobile/src/services`
+  - `mobile/src/types`
+- O mobile ja resolve URL principal e fallback por ambiente.
 - A tela de cadastro em [mobile/src/features/cadastro/index.tsx](c:/prod/99start/mobile/src/features/cadastro/index.tsx) possui 3 etapas:
   - estabelecimento
   - endereco
   - seguranca
+- Na etapa de endereco:
+  - o usuario informa o `CEP`
+  - o app consulta o CEP e preenche `endereco`, `bairro` e `cidade`
+  - o usuario digita manualmente apenas o `complemento`
 - O cadastro hoje faz validacao local de:
   - nome do estabelecimento
   - cnpj
   - nome do responsavel
   - email
   - telefone
+  - cep
   - endereco
+  - complemento
   - bairro
   - cidade
   - senha e confirmacao
-- O fluxo ainda nao chama a API.
-- Ao finalizar, o mobile apenas avanca localmente para a tela de sucesso.
+- O cadastro agora chama `POST /api/v1/auth/register`.
+- O payload final enviado para a API compoe `address` com endereco preenchido pelo CEP + complemento digitado.
+- Ao finalizar, o mobile recebe sessao real da API e avanca para a tela de sucesso.
+- O login agora chama `POST /api/v1/auth/login`.
+- A sessao atual fica em memoria no `App.tsx`.
+- Ainda falta persistencia local de sessao e restauracao automatica ao abrir o app.
 
 ### 3.2. API
 - A API Flask ja possui:
@@ -68,20 +82,23 @@
 - Hoje endereco, bairro e cidade nao sao persistidos pela API.
 
 ### 4.2. Persistencia incompleta para o cadastro real
-- A tabela `establishments` ainda nao possui:
+- Gap resolvido na API:
   - `address`
   - `neighborhood`
   - `city`
-- Isso impede fechar o contrato atual do mobile sem ajuste de backend e migracao.
+- A persistencia do cadastro completo ja esta disponivel no backend.
 
 ### 4.3. Mobile ainda esta 100% mockado para auth
-- O login usa credenciais de `.env` e nao consome a API.
-- O cadastro nao envia payload real.
-- Ainda nao existe camada `services` para concentrar chamadas HTTP.
+- Gap parcialmente resolvido:
+  - o login owner ja consome a API
+  - o cadastro ja envia payload real
+  - a camada `services` ja existe
+- O fluxo `master/admin` continua mockado e separado por escopo.
 
 ### 4.4. Sessao ainda nao foi conectada no app
 - A API ja devolve tokens.
-- O mobile ainda nao armazena token, perfil e estabelecimento autenticado.
+- O mobile ja mantem token, perfil e estabelecimento em memoria.
+- Ainda falta armazenamento local para reaproveitar a sessao entre reinicios do app.
 
 ## 5. Decisao de escopo para agora
 - Manter `Google Auth` para depois.
@@ -149,7 +166,7 @@ Status: concluida
 - Validacao concluida com `python -m pytest`: `16 passed`.
 
 ### Etapa 04. Criar base de integracao no mobile
-Status: pendente
+Status: concluida
 
 - Criar `mobile/src/services`.
 - Criar `mobile/src/types` para contratos da API.
@@ -158,9 +175,14 @@ Status: pendente
   - `register`
   - `login`
   - `me`
+- Concluido com:
+  - `services/config.ts`
+  - `services/api.ts`
+  - `services/auth.ts`
+  - `types/auth.ts`
 
 ### Etapa 05. Ligar a tela de cadastro na API
-Status: pendente
+Status: concluida
 
 - Transformar o payload do formulario para o contrato oficial.
 - Enviar `POST /api/v1/auth/register`.
@@ -170,21 +192,28 @@ Status: pendente
   - erro geral
   - erro por campo
 - So navegar para a tela de sucesso se o cadastro real retornar `201`.
+- Implementado no mobile.
 
 ### Etapa 06. Ligar o login real na API
-Status: pendente
+Status: concluida
 
 - Substituir login mockado por `POST /api/v1/auth/login`.
 - Salvar sessao basica no app.
 - Direcionar o usuario autenticado para o dashboard.
 - Deixar login master/admin separado do fluxo owner se necessario.
+- Implementado para o fluxo owner.
+- O fluxo master/admin continua local e separado.
 
 ### Etapa 07. Validar sessao minima
-Status: pendente
+Status: em andamento
 
 - Consumir `GET /api/v1/auth/me`.
 - Confirmar carregamento do usuario e do estabelecimento apos login/cadastro.
 - Definir comportamento inicial para token expirado.
+- Parcial:
+  - sessao real ja chega no login e cadastro
+  - sessao ja fica em memoria no app
+  - ainda falta `me`, persistencia local, refresh e restauracao
 
 ### Etapa 08. Testes integrados do fluxo
 Status: pendente
@@ -206,13 +235,10 @@ Status: adiada
   - sessao basica
 
 ## 7. Ordem pratica recomendada
-1. Ajustar contrato oficial do cadastro.
-2. Ajustar banco e API para persistir endereco.
-3. Atualizar testes da API.
-4. Criar camada de servicos no mobile.
-5. Ligar cadastro real.
-6. Ligar login real.
-7. Validar sessao com `me`.
+1. Persistir a sessao localmente no mobile.
+2. Validar restauracao com `GET /api/v1/auth/me`.
+3. Preparar `refresh` e `logout`.
+4. Levar sessao real para dashboard, config e modulos seguintes.
 
 ## 8. Critérios de aceite desta primeira fase
 - O mobile envia cadastro real para a API.
@@ -223,8 +249,8 @@ Status: adiada
 - `Google Auth` permanece fora desta entrega.
 
 ## 9. Proximo passo que vamos executar
-- Comecar pela `Etapa 04` e `Etapa 05`:
-  - criar a camada `services` e `types` no mobile
-  - definir `baseURL` por ambiente
-  - conectar a tela de cadastro ao `POST /api/v1/auth/register`
-  - tratar loading, erro e sucesso reais
+- Avancar na `Etapa 07`:
+  - persistir `access_token`, `refresh_token`, `user` e `establishment`
+  - consumir `GET /api/v1/auth/me` na abertura do app
+  - validar sessao antes de entrar no dashboard
+  - depois preparar `refresh` e `logout`

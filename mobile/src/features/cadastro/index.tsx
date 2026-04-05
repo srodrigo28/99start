@@ -14,8 +14,10 @@ import {
 } from "../../shared/components";
 import { useResponsive } from "../../shared/hooks";
 import {
+  formatCep,
   formatCnpj,
   formatPhone,
+  isCep,
   isCnpj,
   isEmail,
   isPhone,
@@ -30,10 +32,12 @@ import {
   StepStatusCard,
   TextField,
 } from "./components";
+import { ApiRequestError, lookupCep, registerOwner } from "../../services";
+import type { AuthSession } from "../../types";
 
 type CadastroScreenProps = {
   onBackHome: () => void;
-  onComplete: (payload: { ownerName: string; city: string }) => void;
+  onComplete: (payload: { ownerName: string; city: string; session: AuthSession }) => void;
 };
 
 type StepId = 1 | 2 | 3;
@@ -44,7 +48,9 @@ type FormState = {
   ownerName: string;
   email: string;
   phone: string;
+  cep: string;
   address: string;
+  complement: string;
   neighborhood: string;
   city: string;
   password: string;
@@ -57,7 +63,9 @@ const initialState: FormState = {
   ownerName: "",
   email: "",
   phone: "",
+  cep: "",
   address: "",
+  complement: "",
   neighborhood: "",
   city: "",
   password: "",
@@ -72,6 +80,8 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
   const [alert, setAlert] = useState<
     { title: string; message?: string; variant: "error" | "success" | "info" } | undefined
   >();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLookingUpCep, setIsLookingUpCep] = useState(false);
 
   const passwordRules = useMemo(
     () => [
@@ -131,14 +141,17 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
   const validateStepTwo = () => {
     const nextErrors: Partial<Record<keyof FormState, string>> = {};
 
+    if (!isCep(form.cep)) {
+      nextErrors.cep = "Informe um CEP valido com 8 digitos.";
+    }
     if (!isRequired(form.address)) {
-      nextErrors.address = "Informe o endereco do estabelecimento.";
+      nextErrors.address = "Busque um CEP valido para preencher o endereco.";
     }
     if (!isRequired(form.neighborhood)) {
-      nextErrors.neighborhood = "Informe o bairro.";
+      nextErrors.neighborhood = "Busque um CEP valido para preencher o bairro.";
     }
     if (!isRequired(form.city)) {
-      nextErrors.city = "Informe a cidade.";
+      nextErrors.city = "Busque um CEP valido para preencher a cidade.";
     }
 
     return nextErrors;
@@ -186,7 +199,89 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
     });
   };
 
-  const finalizeRegistration = () => {
+  const buildRegisterPayload = () => ({
+    owner_name: form.ownerName.trim(),
+    email: form.email.trim().toLowerCase(),
+    password: form.password,
+    establishment_name: form.businessName.trim(),
+    cnpj: form.cnpj.trim(),
+    phone: form.phone.trim(),
+    address: [form.address.trim(), form.complement.trim()].filter(Boolean).join(", "),
+    neighborhood: form.neighborhood.trim(),
+    city: form.city.trim(),
+  });
+
+  const handleCepLookup = async (cepValue: string) => {
+    if (!isCep(cepValue)) {
+      return;
+    }
+
+    setIsLookingUpCep(true);
+    setAlert({
+      title: "Consultando CEP",
+      message: "Estamos preenchendo seu endereco automaticamente.",
+      variant: "info",
+    });
+
+    try {
+      const result = await lookupCep(cepValue);
+
+      if (!result.address || !result.neighborhood || !result.city) {
+        setErrors((previous) => ({
+          ...previous,
+          cep: "O CEP encontrado nao trouxe endereco completo.",
+        }));
+        setAlert({
+          title: "CEP com retorno incompleto",
+          message: "Tente outro CEP ou revise os dados da localizacao.",
+          variant: "error",
+        });
+        return;
+      }
+
+      setForm((previous) => ({
+        ...previous,
+        address: result.address,
+        neighborhood: result.neighborhood,
+        city: result.state ? `${result.city} - ${result.state}` : result.city,
+      }));
+      setErrors((previous) => ({
+        ...previous,
+        cep: undefined,
+        address: undefined,
+        neighborhood: undefined,
+        city: undefined,
+      }));
+      setAlert({
+        title: "Endereco preenchido com sucesso",
+        message: "Agora falta apenas informar o complemento, se necessario.",
+        variant: "success",
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Nao foi possivel consultar o CEP.";
+
+      setForm((previous) => ({
+        ...previous,
+        address: "",
+        neighborhood: "",
+        city: "",
+      }));
+      setErrors((previous) => ({
+        ...previous,
+        cep: message,
+      }));
+      setAlert({
+        title: "Falha ao consultar o CEP",
+        message,
+        variant: "error",
+      });
+    } finally {
+      setIsLookingUpCep(false);
+    }
+  };
+
+  const finalizeRegistration = async () => {
     const nextErrors = validateStepThree();
     setErrors((previous) => ({ ...previous, ...nextErrors }));
 
@@ -199,15 +294,50 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
       return;
     }
 
-    setAlert({
-      title: "Cadastro validado com sucesso",
-      message: "Todos os campos principais passaram nas validacoes. A proxima etapa sera integrar com a API de cadastro real.",
-      variant: "success",
-    });
-    onComplete({
-      ownerName: form.ownerName || "Sebastiao Rodrigo",
-      city: form.city || "Aparecida de Goiania - GO",
-    });
+    setIsSubmitting(true);
+
+    try {
+      const session = await registerOwner(buildRegisterPayload());
+      setAlert({
+        title: "Cadastro realizado com sucesso",
+        message: "Seu estabelecimento foi criado e a sessao inicial ja foi aberta.",
+        variant: "success",
+      });
+      onComplete({
+        ownerName: session.user.owner_name || form.ownerName || "Sebastiao Rodrigo",
+        city: session.establishment.city || form.city || "Aparecida de Goiania - GO",
+        session,
+      });
+    } catch (error) {
+      if (error instanceof ApiRequestError) {
+        const apiFieldErrors: Partial<Record<keyof FormState, string>> = {};
+
+        if (error.errors.includes("owner_name")) apiFieldErrors.ownerName = "Informe o nome do responsavel.";
+        if (error.errors.includes("email")) apiFieldErrors.email = "Informe um e-mail valido.";
+        if (error.errors.includes("password")) apiFieldErrors.password = "Revise a senha informada.";
+        if (error.errors.includes("establishment_name")) apiFieldErrors.businessName = "Informe o nome do estabelecimento.";
+        if (error.errors.includes("cnpj")) apiFieldErrors.cnpj = "Revise o CNPJ informado.";
+        if (error.errors.includes("phone")) apiFieldErrors.phone = "Revise o telefone informado.";
+        if (error.errors.includes("address")) apiFieldErrors.address = "Informe o endereco.";
+        if (error.errors.includes("neighborhood")) apiFieldErrors.neighborhood = "Informe o bairro.";
+        if (error.errors.includes("city")) apiFieldErrors.city = "Informe a cidade.";
+
+        setErrors((previous) => ({ ...previous, ...apiFieldErrors }));
+        setAlert({
+          title: "Nao foi possivel concluir o cadastro",
+          message: error.message,
+          variant: "error",
+        });
+      } else {
+        setAlert({
+          title: "Falha de conexao com a API",
+          message: "Verifique a URL ativa da API e tente novamente em instantes.",
+          variant: "error",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -332,14 +462,14 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
               keyboardType="phone-pad"
             />
             <View className="gap-3 pt-2">
-              <GradientButton label="Voltar" variant="secondary" onPress={onBackHome} />
+              <GradientButton label="Voltar" variant="secondary" onPress={onBackHome} disabled={isSubmitting} />
               <LinearGradient
                 colors={["#4476ff", "#28c8e8"]}
                 start={{ x: 0, y: 0.5 }}
                 end={{ x: 1, y: 0.5 }}
                 style={{ borderRadius: 18 }}
               >
-                <Pressable onPress={nextStep} className="px-5 py-4">
+                <Pressable onPress={nextStep} className="px-5 py-4" disabled={isSubmitting}>
                   <Text className="text-center text-base font-semibold text-white">
                     Proximo
                   </Text>
@@ -369,47 +499,83 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
               />
             ) : null}
             <TextField
-              label="Endereco"
-              placeholder="Rua, numero e complemento"
-              help="Este endereco sera usado para cadastro e operacao."
-              value={form.address}
+              label="CEP"
+              placeholder="00000-000"
+              help={
+                isLookingUpCep
+                  ? "Consultando o CEP informado..."
+                  : "Digite o CEP para preencher endereco, bairro e cidade automaticamente."
+              }
+              value={form.cep}
               onChangeText={(value) => {
-                updateField("address", trimMultilineSpaces(value));
-                clearFieldError("address");
+                const formatted = formatCep(value);
+                updateField("cep", formatted);
+                clearFieldError("cep");
+
+                if (formatted.length < 9) {
+                  setForm((previous) => ({
+                    ...previous,
+                    cep: formatted,
+                    address: "",
+                    neighborhood: "",
+                    city: "",
+                  }));
+                }
+
+                if (formatted.length === 9) {
+                  void handleCepLookup(formatted);
+                }
               }}
+              error={errors.cep}
+              keyboardType="number-pad"
+            />
+            <TextField
+              label="Endereco"
+              placeholder="Endereco preenchido pelo CEP"
+              help="Campo preenchido automaticamente a partir do CEP."
+              value={form.address}
+              onChangeText={() => undefined}
               error={errors.address}
+              editable={false}
+            />
+            <TextField
+              label="Complemento"
+              placeholder="Ex: Quadra 18, lote 4, sala 2"
+              help="Digite apenas o complemento necessario para localizar melhor o estabelecimento."
+              value={form.complement}
+              onChangeText={(value) => {
+                updateField("complement", trimMultilineSpaces(value));
+                clearFieldError("complement");
+              }}
+              error={errors.complement}
             />
             <TextField
               label="Bairro"
-              placeholder="Centro"
+              placeholder="Bairro preenchido pelo CEP"
               value={form.neighborhood}
-              onChangeText={(value) => {
-                updateField("neighborhood", trimMultilineSpaces(value));
-                clearFieldError("neighborhood");
-              }}
+              onChangeText={() => undefined}
               error={errors.neighborhood}
+              editable={false}
             />
             <TextField
               label="Cidade"
-              placeholder="Sao Paulo"
+              placeholder="Cidade preenchida pelo CEP"
               value={form.city}
-              onChangeText={(value) => {
-                updateField("city", trimMultilineSpaces(value));
-                clearFieldError("city");
-              }}
+              onChangeText={() => undefined}
               error={errors.city}
+              editable={false}
             />
             <View className="gap-3 pt-2">
-              <GradientButton label="Voltar" variant="secondary" onPress={previousStep} />
+              <GradientButton label="Voltar" variant="secondary" onPress={previousStep} disabled={isSubmitting || isLookingUpCep} />
               <LinearGradient
                 colors={["#4476ff", "#28c8e8"]}
                 start={{ x: 0, y: 0.5 }}
                 end={{ x: 1, y: 0.5 }}
                 style={{ borderRadius: 18 }}
               >
-                <Pressable onPress={nextStep} className="px-5 py-4">
+                <Pressable onPress={nextStep} className="px-5 py-4" disabled={isSubmitting || isLookingUpCep}>
                   <Text className="text-center text-base font-semibold text-white">
-                    Proximo
+                    {isLookingUpCep ? "Buscando CEP..." : "Proximo"}
                   </Text>
                 </Pressable>
               </LinearGradient>
@@ -502,16 +668,16 @@ export function CadastroScreen({ onBackHome, onComplete }: CadastroScreenProps) 
             </GlassPanel>
 
             <View className="gap-3 pt-2">
-              <GradientButton label="Voltar" variant="secondary" onPress={previousStep} />
+              <GradientButton label="Voltar" variant="secondary" onPress={previousStep} disabled={isSubmitting} />
               <LinearGradient
                 colors={["#4476ff", "#28c8e8"]}
                 start={{ x: 0, y: 0.5 }}
                 end={{ x: 1, y: 0.5 }}
                 style={{ borderRadius: 18 }}
               >
-                <Pressable onPress={finalizeRegistration} className="px-5 py-4">
+                <Pressable onPress={finalizeRegistration} className="px-5 py-4" disabled={isSubmitting}>
                   <Text className="text-center text-base font-semibold text-white">
-                    Finalizar cadastro
+                    {isSubmitting ? "Finalizando..." : "Finalizar cadastro"}
                   </Text>
                 </Pressable>
               </LinearGradient>

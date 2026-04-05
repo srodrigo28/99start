@@ -13,6 +13,7 @@ class Settings:
     flask_env: str
     app_host: str
     app_port: int
+    cors_origins: str
     secret_key: str
     jwt_secret_key: str
     jwt_access_token_expires_minutes: int
@@ -47,6 +48,7 @@ class Settings:
         return {
             'APP_NAME': self.app_name,
             'ENV': self.flask_env,
+            'CORS_ORIGINS': self.cors_origins,
             'SECRET_KEY': self.secret_key,
             'JWT_SECRET_KEY': self.jwt_secret_key,
             'JWT_ACCESS_TOKEN_EXPIRES_MINUTES': self.jwt_access_token_expires_minutes,
@@ -66,6 +68,7 @@ def get_settings() -> Settings:
         flask_env=env_map['FLASK_ENV'],
         app_host=env_map['APP_HOST'],
         app_port=int(env_map['APP_PORT']),
+        cors_origins=env_map.get('CORS_ORIGINS', '*'),
         secret_key=env_map['SECRET_KEY'],
         jwt_secret_key=env_map['JWT_SECRET_KEY'],
         jwt_access_token_expires_minutes=int(env_map.get('JWT_ACCESS_TOKEN_EXPIRES_MINUTES', '60')),

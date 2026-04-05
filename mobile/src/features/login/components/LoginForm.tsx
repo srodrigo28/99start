@@ -11,6 +11,7 @@ type LoginFormProps = {
   emailError?: string;
   passwordError?: string;
   alert?: { title: string; message: string; variant: "error" | "success" | "info" };
+  isSubmitting?: boolean;
   onDismissAlert: () => void;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
@@ -24,6 +25,7 @@ export function LoginForm({
   emailError,
   passwordError,
   alert,
+  isSubmitting = false,
   onDismissAlert,
   onEmailChange,
   onPasswordChange,
@@ -82,14 +84,14 @@ export function LoginForm({
               end={{ x: 1, y: 0.5 }}
               style={{ borderRadius: 18 }}
             >
-              <Pressable onPress={onEnterPanel} className="px-5 py-4">
+              <Pressable onPress={onEnterPanel} className="px-5 py-4" disabled={isSubmitting}>
                 <Text className="text-center text-base font-semibold text-white">
-                  Entrar no painel
+                  {isSubmitting ? "Entrando..." : "Entrar no painel"}
                 </Text>
               </Pressable>
             </LinearGradient>
 
-            <Pressable onPress={onCreateAccount}>
+            <Pressable onPress={onCreateAccount} disabled={isSubmitting}>
               <Text className="text-center text-base text-[#d7e3f6]">
                 Ainda nao tem conta?{" "}
                 <Text className="font-semibold text-[#c9d7ef]">Criar cadastro</Text>

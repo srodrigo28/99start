@@ -12,6 +12,10 @@ export function isPhone(value: string) {
   return onlyDigits(value).length >= 10;
 }
 
+export function isCep(value: string) {
+  return onlyDigits(value).length === 8;
+}
+
 export function isStrongPassword(value: string) {
   return (
     value.length >= 8 &&

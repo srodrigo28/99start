@@ -13,6 +13,7 @@ def app():
             'TESTING': True,
             'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
             'SQLALCHEMY_ENGINE_OPTIONS': {},
+            'CORS_ORIGINS': 'http://localhost:8081',
         }
     )
 

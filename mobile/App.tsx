@@ -11,6 +11,7 @@ import { StartScreen } from "./src/features/cta";
 import { DashboardScreen } from "./src/features/dashboard";
 import { LoginScreen } from "./src/features/login";
 import { ShowScreen } from "./src/features/show";
+import type { AuthSession } from "./src/types";
 import "./global.css";
 
 type AppScreen =
@@ -31,6 +32,7 @@ export default function App() {
     city: "Aparecida de Goiania - GO",
   });
   const [selectedAdminStore, setSelectedAdminStore] = useState<AdminStore | null>(null);
+  const [authSession, setAuthSession] = useState<AuthSession | null>(null);
 
   return (
     <SafeAreaView className="flex-1 bg-[#07111f]">
@@ -45,7 +47,14 @@ export default function App() {
         <LoginScreen
           onBackHome={() => setScreen("start")}
           onCreateAccount={() => setScreen("cadastro")}
-          onLoginSuccess={() => setScreen("dashboard")}
+          onLoginSuccess={(session) => {
+            setAuthSession(session);
+            setOnboardingData({
+              ownerName: session.user.owner_name,
+              city: session.establishment.city,
+            });
+            setScreen("dashboard");
+          }}
           onMasterLoginSuccess={() => setScreen("admin")}
         />
       ) : null}
@@ -53,7 +62,11 @@ export default function App() {
         <CadastroScreen
           onBackHome={() => setScreen("start")}
           onComplete={(payload) => {
-            setOnboardingData(payload);
+            setAuthSession(payload.session);
+            setOnboardingData({
+              ownerName: payload.ownerName,
+              city: payload.city,
+            });
             setScreen("show");
           }}
         />

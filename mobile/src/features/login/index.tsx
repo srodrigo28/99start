@@ -1,13 +1,15 @@
 import { useState } from "react";
 
 import { ScreenContainer } from "../../shared/components";
+import { ApiRequestError, loginOwner } from "../../services";
 import { isEmail, isRequired } from "../../shared/utils";
 import { LoginForm, LoginHeader } from "./components";
+import type { AuthSession } from "../../types";
 
 type LoginScreenProps = {
   onBackHome: () => void;
   onCreateAccount: () => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (session: AuthSession) => void;
   onMasterLoginSuccess: () => void;
 };
 
@@ -32,8 +34,9 @@ export function LoginScreen({
   const [alert, setAlert] = useState<
     { title: string; message: string; variant: "error" | "success" | "info" } | undefined
   >();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleEnterPanel = () => {
+  const handleEnterPanel = async () => {
     const nextErrors: { email?: string; password?: string } = {};
 
     if (!isRequired(email)) {
@@ -48,16 +51,6 @@ export function LoginScreen({
       nextErrors.password = "Sua senha precisa ter ao menos 6 caracteres.";
     }
 
-    if (Object.keys(nextErrors).length === 0) {
-      const isDefaultLogin = email === defaultEmail && password === defaultPassword;
-      const isMasterLogin = email === masterEmail && password === masterPassword;
-
-      if (!isDefaultLogin && !isMasterLogin) {
-        nextErrors.email = "Use um acesso de teste configurado no .env.";
-        nextErrors.password = "As credenciais precisam corresponder a um perfil liberado.";
-      }
-    }
-
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -69,13 +62,46 @@ export function LoginScreen({
       return;
     }
 
-    setAlert(undefined);
     if (email === masterEmail && password === masterPassword) {
+      setAlert(undefined);
       onMasterLoginSuccess();
       return;
     }
 
-    onLoginSuccess();
+    setIsSubmitting(true);
+    setAlert(undefined);
+
+    try {
+      const session = await loginOwner({ email, password });
+      onLoginSuccess(session);
+    } catch (error) {
+      if (error instanceof ApiRequestError) {
+        const apiFieldErrors: { email?: string; password?: string } = {};
+
+        if (error.errors.includes("email")) {
+          apiFieldErrors.email = "Revise o e-mail informado.";
+        }
+
+        if (error.errors.includes("password")) {
+          apiFieldErrors.password = "Revise a senha informada.";
+        }
+
+        setErrors((previous) => ({ ...previous, ...apiFieldErrors }));
+        setAlert({
+          title: "Nao foi possivel entrar",
+          message: error.message,
+          variant: "error",
+        });
+      } else {
+        setAlert({
+          title: "Falha de conexao com a API",
+          message: "Verifique a URL ativa da API e tente novamente em instantes.",
+          variant: "error",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,6 +113,7 @@ export function LoginScreen({
         emailError={errors.email}
         passwordError={errors.password}
         alert={alert}
+        isSubmitting={isSubmitting}
         onDismissAlert={() => setAlert(undefined)}
         onEmailChange={(value) => {
           setEmail(value.trim());
