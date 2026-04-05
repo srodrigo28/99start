@@ -18,17 +18,38 @@ Um projeto moderno e premium focado em otimizar e gerenciar o atendimento, mesas
 
 ## 📸 Preview do Sistema Online
 
-Confira algumas telas do painel gerencial:
+Confira algumas telas do fluxo mobile:
 
-| 📋 Controle de Comandas | 📊 Painel Principal (Resumo de Caixa) | 🍽️ Vitrine / Onboarding |
-|:---:|:---:|:---:|
-| <img src="./mobile/preview/01-cta/1-cta.png" alt="Controle de Comanda" width="300" /> |
-| <img src="./mobile/preview/01-cta/2-cta.png" alt="Controle de Comanda" width="300" /> |
-| <img src="./mobile/preview/01-cta/3-login.png" alt="Controle de Comanda" width="300" /> |
-
-| <img src="./mobile/preview/02-cadastro/1-cadastro.png" alt="Controle de Comanda" width="300" /> |
-| <img src="./mobile/preview/02-cadastro/cadastro-2.png" alt="Controle de Comanda" width="300" /> |
-| <img src="./mobile/preview/02-cadastro/cadastro-3.png" alt="Controle de Comanda" width="300" /> |
+<table>
+  <tr>
+    <td align="center">
+      <strong>CTA 1</strong><br />
+      <img src="mobile/preview/01-cta/1-cta.png" alt="Tela CTA 1" width="260" />
+    </td>
+    <td align="center">
+      <strong>CTA 2</strong><br />
+      <img src="mobile/preview/01-cta/2-cta.png" alt="Tela CTA 2" width="260" />
+    </td>
+    <td align="center">
+      <strong>Login</strong><br />
+      <img src="mobile/preview/01-cta/3-login.png" alt="Tela de login" width="260" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Cadastro 1</strong><br />
+      <img src="mobile/preview/02-cadastro/1-cadastro.png" alt="Tela de cadastro etapa 1" width="260" />
+    </td>
+    <td align="center">
+      <strong>Cadastro 2</strong><br />
+      <img src="mobile/preview/02-cadastro/cadastro-2.png" alt="Tela de cadastro etapa 2" width="260" />
+    </td>
+    <td align="center">
+      <strong>Cadastro 3</strong><br />
+      <img src="mobile/preview/02-cadastro/cadastro-3.png" alt="Tela de cadastro etapa 3" width="260" />
+    </td>
+  </tr>
+</table>
 
 ---
 
