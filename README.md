@@ -16,7 +16,7 @@ Um projeto moderno e premium focado em otimizar e gerenciar o atendimento, mesas
 
 ---
 
-## 📸 Preview do Sistema
+## 📸 Preview do Sistema Online
 
 Confira algumas telas do painel gerencial:
 
